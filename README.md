@@ -33,14 +33,6 @@
 
 ---
 
-## ⚙️ 실행 방법
-
-```bash
-git clone https://github.com/wlsejrdyd/tasks.git
-cd tasks
-./gradlew bootRun
-```
-
 > **MySQL DB 설정은 `src/main/resources/application.yml`에서 조정해 주세요.**
 
 ---
