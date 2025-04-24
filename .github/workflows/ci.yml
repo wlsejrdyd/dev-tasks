@@ -24,7 +24,7 @@ jobs:
         if: success()
         run: |
           curl -X POST -H 'Content-type: application/json' \
-          --data '{"text":"✅ SALM 프로젝트 빌드 성공!"}' \
+          --data '{"text":"✅ TASKS 프로젝트 빌드 성공!"}' \
           ${{ secrets.SLACK_WEBHOOK_URL }}
 
       # ✅ 빌드 실패 시 Slack 메시지
@@ -32,5 +32,5 @@ jobs:
         if: failure()
         run: |
           curl -X POST -H 'Content-type: application/json' \
-          --data '{"text":"❌ SALM 프로젝트 빌드 실패... 확인 필요!"}' \
+          --data '{"text":"❌ TASKS 프로젝트 빌드 실패... 확인 필요!"}' \
           ${{ secrets.SLACK_WEBHOOK_URL }}
