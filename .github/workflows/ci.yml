@@ -1,0 +1,36 @@
+name: Build TASKS
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 코드
+        uses: actions/checkout@v3
+
+      - name: gradlew 권한 부여
+        run: chmod +x ./gradlew
+
+      - name: Gradle Build
+        run: ./gradlew build
+
+      # ✅ 빌드 성공 시 Slack 메시지
+      - name: 슬랙 알림 (성공)
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"✅ SALM 프로젝트 빌드 성공!"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      # ✅ 빌드 실패 시 Slack 메시지
+      - name: 슬랙 알림 (실패)
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"❌ SALM 프로젝트 빌드 실패... 확인 필요!"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
