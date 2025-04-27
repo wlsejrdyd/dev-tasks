@@ -1,4 +1,4 @@
-name: Build TASKS
+name: TASKS Full Auto Deployment
 
 on:
   push:
@@ -6,31 +6,48 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout 코드
-        uses: actions/checkout@v3
+    # 코드 체크아웃
+    - name: Checkout 코드
+      uses: actions/checkout@v3
 
-      - name: gradlew 권한 부여
-        run: chmod +x ./gradlew
+    # gradlew 실행 권한 부여
+    - name: gradlew 실행 권한 부여
+      run: chmod +x ./gradlew
 
-      - name: Gradle Build
-        run: ./gradlew build
+    # 버전 변수 설정
+    - name: 변수 설정 (DATE, VERSION)
+      id: vars
+      run: |
+        echo "DATE=$(date +%Y-%m-%d)" >> $GITHUB_ENV
+        echo "VERSION=v2.0" >> $GITHUB_ENV  # 🔥 여기 수동 수정 (버전명)
 
-      # ✅ 빌드 성공 시 Slack 메시지
-      - name: 슬랙 알림 (성공)
-        if: success()
-        run: |
-          curl -X POST -H 'Content-type: application/json' \
-          --data '{"text":"✅ TASKS 프로젝트 빌드 성공!"}' \
-          ${{ secrets.SLACK_WEBHOOK_URL }}
+    # Slack 알림 (빌드 성공)
+    - name: Slack 알림 (빌드 성공)
+      if: success()
+      run: |
+        curl -X POST -H 'Content-type: application/json' \
+        --data "{
+          \"text\": \"✅ TASKS 빌드 및 배포 성공!\n- 버전: ${{ env.DATE }}-${{ env.VERSION }}\n- 브랜치: ${{ github.ref_name }}\n- 커밋: ${{ github.event.head_commit.message }}\n- 작성자: ${{ github.event.head_commit.author.name }}\"
+        }" ${{ secrets.SLACK_WEBHOOK_URL }}
 
-      # ✅ 빌드 실패 시 Slack 메시지
-      - name: 슬랙 알림 (실패)
-        if: failure()
-        run: |
-          curl -X POST -H 'Content-type: application/json' \
-          --data '{"text":"❌ TASKS 프로젝트 빌드 실패... 확인 필요!"}' \
-          ${{ secrets.SLACK_WEBHOOK_URL }}
+    # Slack 알림 (빌드 실패)
+    - name: Slack 알림 (빌드 실패)
+      if: failure()
+      run: |
+        curl -X POST -H 'Content-type: application/json' \
+        --data "{
+          \"text\": \"❌ TASKS 빌드 실패!\n- 버전: ${{ env.DATE }}-${{ env.VERSION }}\n- 브랜치: ${{ github.ref_name }}\n- 커밋: ${{ github.event.head_commit.message }}\n- 작성자: ${{ github.event.head_commit.author.name }}\"
+        }" ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    # GitHub 태그 추가
+    - name: GitHub 태그 추가
+      if: success()
+      run: |
+        git config user.name "github-actions"
+        git config user.email "actions@github.com"
+        git tag "${{ env.DATE }}-${{ env.VERSION }}"
+        git push origin "${{ env.DATE }}-${{ env.VERSION }}"
