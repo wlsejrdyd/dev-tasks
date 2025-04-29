@@ -25,9 +25,6 @@ public class AuthController {
         return "login";
     }
 
-    // [※ 제거됨] @PostMapping("/login") 메서드 삭제
-    // Spring Security가 대신 로그인 처리함
-
     @GetMapping("/register")
     public String registerPage() {
         return "register";

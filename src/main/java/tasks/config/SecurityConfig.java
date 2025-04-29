@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,24 +19,29 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authBuilder.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
-
         http
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/auth/**") // 회원 관련 요청만 예외 처리
+            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**", "/css/**", "/js/**", "/images/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")
-                .loginProcessingUrl("/login")  // 이걸로 Spring Security가 로그인 처리함
+		.loginProcessingUrl("/login")
                 .defaultSuccessUrl("/dashboard", true)
+		.failureUrl("/auth/login?error")
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutSuccessUrl("/auth/login?logout")
                 .permitAll()
+            )
+            .sessionManagement(session -> session
+                .sessionFixation().migrateSession()        // 세션 고정 보호
+                .maximumSessions(1)                        // 동시 로그인 1개 제한
+                .maxSessionsPreventsLogin(true)            // 두 번째 로그인 거부
             );
 
         return http.build();
