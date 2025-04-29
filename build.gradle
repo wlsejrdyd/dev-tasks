@@ -27,7 +27,7 @@ dependencies {
 }
 
 springBoot {
-    mainClass = "tasks.TasksApplication"   // ✅ 이거 추가!!
+    mainClass = "tasks.TasksApplication"
 }
 
 tasks.named("test") {

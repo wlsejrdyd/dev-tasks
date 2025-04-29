@@ -1,1 +1,24 @@
-<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>대시보드</title></head><body><h2>대시보드</h2></body></html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>대시보드</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h2>대시보드</h2>
+    <p>환영합니다, <strong th:text="${username}">사용자</strong>님!</p>
+
+    <div class="dashboard-box">
+        <h3>최근 작업</h3>
+        <p>(추후 작업 내역 표시 예정)</p>
+    </div>
+
+    <div class="dashboard-box">
+        <h3>참여 중인 프로젝트</h3>
+        <p>(추후 프로젝트 목록 표시 예정)</p>
+    </div>
+</div>
+</body>
+</html>
