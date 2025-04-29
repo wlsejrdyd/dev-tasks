@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>작업 등록</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <h2>작업 등록</h2>
+    <form th:action="@{/tasks}" method="post" th:object="${task}">
+        <input type="text" th:field="*{title}" placeholder="작업 제목" required>
+        <input type="text" th:field="*{assignedTo}" placeholder="담당자" required>
+        <input type="date" th:field="*{dueDate}" required>
+        <textarea th:field="*{description}" placeholder="작업 설명"></textarea>
+        <button type="submit">등록</button>
+    </form>
+</body>
+</html>

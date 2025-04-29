@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>DNS 목록</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <h2>DNS 목록</h2>
+    <a th:href="@{/dns/new}">+ 새 도메인</a>
+    <form th:action="@{/dns/search}" method="get">
+        <input type="text" name="domain" placeholder="도메인 검색">
+        <button type="submit">검색</button>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>도메인</th>
+                <th>설명</th>
+                <th>등록일</th>
+                <th>관리</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="dns : ${dnsList}">
+                <td th:text="${dns.domain}"></td>
+                <td th:text="${dns.description}"></td>
+                <td th:text="${dns.createdAt}"></td>
+                <td>
+                    <a th:href="@{/dns/edit/{id}(id=${dns.id})}">수정</a>
+                    <a th:href="@{/dns/delete/{id}(id=${dns.id})}">삭제</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

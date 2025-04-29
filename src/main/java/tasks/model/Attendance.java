@@ -11,14 +11,12 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Project {
+public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String projectName;
-    private String pm;
-    private String surveyPath;
-    private LocalDate openDate;
-    private int progress;
+    private String employeeName;
+    private LocalDate date;
+    private String shift;
 }

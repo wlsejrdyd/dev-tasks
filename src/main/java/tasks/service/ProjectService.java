@@ -1,6 +1,6 @@
 package tasks.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tasks.model.Project;
 import tasks.repository.ProjectRepository;
@@ -8,17 +8,24 @@ import tasks.repository.ProjectRepository;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProjectService {
 
-    @Autowired
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
 
-    public List<Project> findAll() {
+    public List<Project> getAllProjects() {
         return projectRepository.findAll();
     }
 
-    public Project save(Project project) {
+    public Project getProjectById(Long id) {
+        return projectRepository.findById(id).orElse(null);
+    }
+
+    public Project saveProject(Project project) {
         return projectRepository.save(project);
     }
-}
 
+    public void deleteProject(Long id) {
+        projectRepository.deleteById(id);
+    }
+}

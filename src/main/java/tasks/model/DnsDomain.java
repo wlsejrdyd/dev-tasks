@@ -5,20 +5,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class Project {
+public class DnsDomain {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String projectName;
-    private String pm;
-    private String surveyPath;
-    private LocalDate openDate;
-    private int progress;
+    private String domainName;
+    private String requester;
+    private String description;
+    private String aRecord;
+    private String registeredDate;
+    private boolean sslApplied;
 }

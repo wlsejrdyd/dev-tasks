@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>연차 관리</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <h2>연차 관리</h2>
+    <a th:href="@{/annual-leave/new}">+ 새 연차 등록</a>
+    <table>
+        <thead>
+            <tr>
+                <th>이름</th>
+                <th>날짜</th>
+                <th>비고</th>
+                <th>관리</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="leave : ${annualLeaves}">
+                <td th:text="${leave.employeeName}"></td>
+                <td th:text="${leave.date}"></td>
+                <td th:text="${leave.note}"></td>
+                <td>
+                    <a th:href="@{/annual-leave/edit/{id}(id=${leave.id})}">수정</a>
+                    <a th:href="@{/annual-leave/delete/{id}(id=${leave.id})}">삭제</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

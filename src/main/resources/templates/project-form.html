@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>프로젝트 등록</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <h2>프로젝트 등록</h2>
+    <form th:action="@{/projects}" method="post" th:object="${project}">
+        <input type="text" th:field="*{name}" placeholder="프로젝트 이름" required>
+        <input type="text" th:field="*{manager}" placeholder="PM" required>
+        <input type="date" th:field="*{startDate}" placeholder="등록일자" required>
+        <input type="date" th:field="*{dueDate}" placeholder="완료 예정일" required>
+        <button type="submit">등록</button>
+    </form>
+</body>
+</html>

@@ -5,4 +5,3 @@ import tasks.model.Project;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 }
-

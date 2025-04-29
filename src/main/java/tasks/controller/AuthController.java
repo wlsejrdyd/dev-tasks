@@ -32,7 +32,7 @@ public class AuthController {
         Optional<User> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isPresent() && passwordEncoder.matches(password, optionalUser.get().getPassword())) {
             session.setAttribute("user", optionalUser.get());
-            session.setMaxInactiveInterval(600); // 10분
+            session.setMaxInactiveInterval(600); // 10분 유지
             return "redirect:/dashboard";
         } else {
             model.addAttribute("error", "아이디 또는 비밀번호가 올바르지 않습니다.");
@@ -51,10 +51,11 @@ public class AuthController {
             model.addAttribute("error", "아이디는 영문, 숫자, 언더스코어(_)만 사용할 수 있습니다.");
             return "register";
         }
-        if (!Pattern.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=[\\]{};':\"\\\\|,.<>/?]).{9,}$", user.getPassword())) {
+        if (!Pattern.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{9,}$", user.getPassword())) {
             model.addAttribute("error", "비밀번호는 9자 이상, 대소문자/숫자/특수문자를 각각 1개 이상 포함해야 합니다.");
             return "register";
         }
+
         userService.registerUser(user);
         return "redirect:/auth/login";
     }
@@ -97,3 +98,4 @@ public class AuthController {
         return "find-password";
     }
 }
+

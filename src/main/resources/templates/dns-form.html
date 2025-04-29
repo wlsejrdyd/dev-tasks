@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>DNS 등록</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <h2>DNS 등록</h2>
+    <form th:action="@{/dns}" method="post" th:object="${dns}">
+        <input type="text" th:field="*{domain}" placeholder="도메인 이름" required>
+        <input type="text" th:field="*{description}" placeholder="설명">
+        <button type="submit">등록</button>
+    </form>
+</body>
+</html>
