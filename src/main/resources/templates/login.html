@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
     <link rel="stylesheet" href="/css/style.css">
+    <script>
+        function enforceEnglish(input) {
+            input.style.imeMode = 'disabled';
+            input.setAttribute('inputmode', 'latin');
+        }
+        window.onload = function () {
+            document.getElementById('username').addEventListener('focus', function () {
+                enforceEnglish(this);
+            });
+        };
+    </script>
+    <style>
+        .extra-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -41,3 +58,4 @@
 </script>
 </body>
 </html>
+

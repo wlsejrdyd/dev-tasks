@@ -1,33 +1,103 @@
-<!DOCTYPE html>
-<html lang="ko">
+<!DOCTYPE html><html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>회원가입</title>
     <link rel="stylesheet" href="/css/style.css">
+    <script>
+        function enforceAlphanumericInput(e) {
+            e.value = e.value.replace(/[^a-zA-Z0-9]/g, '');
+        }function enforceKoreanInput(e) {
+        e.value = e.value.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');
+    }
+
+    function autoHyphenPhone(str) {
+        str = str.replace(/[^0-9]/g, '');
+        let tmp = '';
+        if (str.length < 4) {
+            return str;
+        } else if (str.length < 7) {
+            tmp += str.substr(0, 3) + '-' + str.substr(3);
+            return tmp;
+        } else if (str.length < 11) {
+            tmp += str.substr(0, 3) + '-' + str.substr(3, 3) + '-' + str.substr(6);
+            return tmp;
+        } else {
+            tmp += str.substr(0, 3) + '-' + str.substr(3, 4) + '-' + str.substr(7);
+            return tmp;
+        }
+    }
+
+    window.onload = function() {
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const phoneInput = document.getElementById('phoneNumber');
+        const nameInput = document.getElementById('name');
+
+        usernameInput.addEventListener('input', function() {
+            enforceAlphanumericInput(this);
+        });
+        usernameInput.addEventListener('focus', function() {
+            this.style.imeMode = 'disabled';
+        });
+
+        nameInput.addEventListener('input', function() {
+            enforceKoreanInput(this);
+        });
+        nameInput.addEventListener('focus', function() {
+            this.style.imeMode = 'active';
+        });
+
+        passwordInput.addEventListener('input', function() {
+            this.placeholder = '';
+        });
+
+        phoneInput.addEventListener('input', function() {
+            this.value = autoHyphenPhone(this.value);
+        });
+
+        usernameInput.addEventListener('blur', async function () {
+            const res = await fetch(`/auth/check-username?username=${encodeURIComponent(this.value)}`);
+            const data = await res.json();
+            const msgBox = document.getElementById('username-check');
+            if (data.exists) {
+                msgBox.textContent = '이미 등록된 계정입니다.';
+                msgBox.className = 'error-message';
+            } else {
+                msgBox.textContent = '사용 가능한 계정입니다.';
+                msgBox.className = 'success-message';
+            }
+        });
+    };
+</script>
+<style>
+    #password {
+        font-size: 14px;
+    }
+</style>
+
 </head>
 <body>
-    <div class="container">
-        <h2>회원가입</h2>
-        <form method="post" action="/auth/register">
-            <label for="username">아이디</label>
-            <input type="text" id="username" name="username" required>
+<div class="container">
+    <h2>회원가입</h2>
+    <form method="post" action="/auth/register" th:object="${user}">
+        <label for="username">아이디</label>
+        <input type="text" id="username" name="username" placeholder="영문 입력 바람" required>
+        <div id="username-check"></div>
+        <div th:if="${error}" th:text="${error}" class="error-message"></div><label for="password">비밀번호</label>
+    <input type="password" id="password" name="password" placeholder="대/소문자,숫자,특수문자를 포함한 9자리 이상 입력" required>
 
-            <label for="password">비밀번호</label>
-            <input type="password" id="password" name="password" required>
+    <label for="email">이메일</label>
+    <input type="email" id="email" name="email" required>
 
-            <label for="email">이메일</label>
-            <input type="email" id="email" name="email" required>
+    <label for="name">이름</label>
+    <input type="text" id="name" name="name" required>
 
-            <label for="name">이름</label>
-            <input type="text" id="name" name="name" required>
+    <label for="phoneNumber">전화번호</label>
+    <input type="text" id="phoneNumber" name="phoneNumber" required>
 
-            <label for="phoneNumber">전화번호</label>
-            <input type="text" id="phoneNumber" name="phoneNumber" required>
+    <button type="submit">회원가입</button>
+</form>
 
-            <div th:if="${error}" class="error-message" th:text="${error}"></div>
-
-            <button type="submit">회원가입</button>
-        </form>
-    </div>
+</div>
 </body>
 </html>
