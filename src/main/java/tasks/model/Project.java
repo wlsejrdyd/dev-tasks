@@ -21,4 +21,6 @@ public class Project {
     private String surveyPath;
     private LocalDate openDate;
     private int progress;
+    @Column(nullable = false)
+    private LocalDate startDate;
 }

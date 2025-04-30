@@ -12,11 +12,14 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 public class Attendance {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String employeeName;
-    private LocalDate date;
-    private String shift;
+    private String username;
+
+    private LocalDate workDate;
+
+    private boolean present;
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -20,4 +21,7 @@ public class DnsDomain {
     private String aRecord;
     private String registeredDate;
     private boolean sslApplied;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

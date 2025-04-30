@@ -20,4 +20,8 @@ public class AttendanceService {
     public Attendance saveAttendance(Attendance attendance) {
         return attendanceRepository.save(attendance);
     }
+
+    public List<Attendance> getRecentAttendance() {
+        return attendanceRepository.findTop5ByOrderByWorkDateDesc();
+    }
 }
