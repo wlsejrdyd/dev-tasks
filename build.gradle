@@ -5,7 +5,12 @@ plugins {
 }
 
 group = "dev-tasks"
-version = "$(cat /app/tasks/version)"
+def versionFile = file("version")
+if (versionFile.exists()) {
+    version = versionFile.text.trim()
+} else {
+    version = "0.0.1-SNAPSHOT"
+}
 sourceCompatibility = "17"
 
 repositories {
