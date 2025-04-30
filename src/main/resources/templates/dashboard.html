@@ -1,23 +1,84 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>대시보드</title>
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .section { margin-bottom: 40px; }
+        .section h3 { border-bottom: 2px solid #ccc; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 10px; text-align: left; }
+        th { background-color: #f0f0f0; }
+    </style>
 </head>
 <body>
 <div class="container">
     <h2>대시보드</h2>
-    <p>환영합니다, <strong th:text="${username}">사용자</strong>님!</p>
 
-    <div class="dashboard-box">
-        <h3>최근 작업</h3>
-        <p>(추후 작업 내역 표시 예정)</p>
+    <div class="section">
+        <h3>프로젝트 개요</h3>
+        <table>
+            <thead>
+                <tr><th>프로젝트명</th><th>시작일</th><th>상태</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="project : ${projects}">
+                    <td th:text="${project.name}">프로젝트명</td>
+                    <td th:text="${project.startDate}">시작일</td>
+                    <td th:text="${project.status}">상태</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
-    <div class="dashboard-box">
-        <h3>참여 중인 프로젝트</h3>
-        <p>(추후 프로젝트 목록 표시 예정)</p>
+    <div class="section">
+        <h3>IP 사용현황</h3>
+        <table>
+            <thead>
+                <tr><th>IP</th><th>설명</th><th>상태</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="ip : ${ips}">
+                    <td th:text="${ip.address}">1.1.1.1</td>
+                    <td th:text="${ip.description}">설명</td>
+                    <td th:text="${ip.status}">UP</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h3>DNS 도메인 목록</h3>
+        <table>
+            <thead>
+                <tr><th>도메인명</th><th>등록일</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="dns : ${dnsList}">
+                    <td th:text="${dns.name}">example.com</td>
+                    <td th:text="${dns.createdAt}">2025-01-01</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h3>근태 현황</h3>
+        <table>
+            <thead>
+                <tr><th>이름</th><th>날짜</th><th>출근시간</th><th>퇴근시간</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="att : ${attendances}">
+                    <td th:text="${att.name}">홍길동</td>
+                    <td th:text="${att.workDate}">2025-01-01</td>
+                    <td th:text="${att.checkIn}">09:00</td>
+                    <td th:text="${att.checkOut}">18:00</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>

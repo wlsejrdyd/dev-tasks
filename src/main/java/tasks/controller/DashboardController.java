@@ -1,22 +1,24 @@
 package tasks.controller;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import tasks.model.User;
+import tasks.service.DashboardService;
 
 @Controller
 @RequiredArgsConstructor
 public class DashboardController {
 
+    private final DashboardService dashboardService;
+
     @GetMapping("/dashboard")
-    public String dashboard(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
-        if (user != null) {
-            model.addAttribute("username", user.getUsername());
-        }
+    public String dashboard(Model model) {
+        model.addAttribute("username", dashboardService.getCurrentUsername());
+        model.addAttribute("projects", dashboardService.getProjectOverview());
+        model.addAttribute("ips", dashboardService.getIpStatus());
+        model.addAttribute("domains", dashboardService.getDnsDomains());
+        model.addAttribute("attendances", dashboardService.getAttendanceStatus());
         return "dashboard";
     }
 }

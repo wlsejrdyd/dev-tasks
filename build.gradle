@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev-tasks"
-version = "1.0"
+version = "$(cat /app/tasks/version)"
 sourceCompatibility = "17"
 
 repositories {

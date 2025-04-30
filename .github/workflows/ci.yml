@@ -23,7 +23,7 @@ jobs:
       id: vars
       run: |
         echo "DATE=$(date +%Y-%m-%d)" >> $GITHUB_ENV
-        echo "VERSION=v1.0" >> $GITHUB_ENV  # 🔥 여기 수동 수정 (버전명)
+        echo "VERSION=$(cat /app/tasks/version)" >> $GITHUB_ENV  # 🔥 여기 수동 수정 (버전명)
 
     # Slack 알림 (빌드 성공)
     - name: Slack 알림 (빌드 성공)
