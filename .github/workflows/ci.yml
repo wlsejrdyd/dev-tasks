@@ -21,40 +21,43 @@ jobs:
     # 버전 변수 설정
     - name: Get Version
       run: |
-        VERSION=$(cat version)
-    - name: Use Version
-      run: echo "Version is $VERSION"
-      env:
-        VERSION: ${{ env.VERSION }}
-    - name: 변수 설정 (DATE, VERSION)
+          VERSION=$(cat version)
+              echo "VERSION=$VERSION" >> $GITHUB_ENV  # ★ 여기가 핵심!
+              
+     # 버전 출력
+     - name: Use Version
+       run: echo "Version is $VERSION"
+         env:
+             VERSION: ${{ env.VERSION }}
+     - name: 변수 설정 (DATE, VERSION)
       id: vars
       run: |
         echo "DATE=$(date +%Y-%m-%d)" >> $GITHUB_ENV
-        echo "VERSION=$VERSION" >> $GITHUB_ENV  # 🔥 여기 수동 수정 (버전명)
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-    # Slack 알림 (빌드 성공)
-    - name: Slack 알림 (빌드 성공)
-      if: success()
-      run: |
-        curl -X POST -H 'Content-type: application/json' \
-        --data "{
-          \"text\": \"✅ TASKS 빌드 및 배포 성공!\n- 버전: ${{ env.DATE }}-${{ env.VERSION }}\n- 브랜치: ${{ github.ref_name }}\n- 커밋: ${{ github.event.head_commit.message }}\n- 작성자: ${{ github.event.head_commit.author.name }}\"
-        }" ${{ secrets.SLACK_WEBHOOK_URL }}
+     # Slack 알림 (빌드 성공)
+     - name: Slack 알림 (빌드 성공)
+       if: success()
+       run: |
+         curl -X POST -H 'Content-type: application/json' \
+         --data "{
+           \"text\": \"✅ TASKS 빌드 및 배포 성공!\n- 버전: ${{ env.DATE }}-${{ env.VERSION }}\n- 브랜치: ${{ github.ref_name }}\n- 커밋: ${{ github.event.head_commit.message }}\n- 작성자: ${{ github.event.head_commit.author.name }}\"
+         }" ${{ secrets.SLACK_WEBHOOK_URL }}
 
-    # Slack 알림 (빌드 실패)
-    - name: Slack 알림 (빌드 실패)
-      if: failure()
-      run: |
-        curl -X POST -H 'Content-type: application/json' \
-        --data "{
-          \"text\": \"❌ TASKS 빌드 실패!\n- 버전: ${{ env.DATE }}-${{ env.VERSION }}\n- 브랜치: ${{ github.ref_name }}\n- 커밋: ${{ github.event.head_commit.message }}\n- 작성자: ${{ github.event.head_commit.author.name }}\"
-        }" ${{ secrets.SLACK_WEBHOOK_URL }}
+     # Slack 알림 (빌드 실패)
+     - name: Slack 알림 (빌드 실패)
+       if: failure()
+       run: |
+         curl -X POST -H 'Content-type: application/json' \
+         --data "{
+           \"text\": \"❌ TASKS 빌드 실패!\n- 버전: ${{ env.DATE }}-${{ env.VERSION }}\n- 브랜치: ${{ github.ref_name }}\n- 커밋: ${{ github.event.head_commit.message }}\n- 작성자: ${{ github.event.head_commit.author.name }}\"
+         }" ${{ secrets.SLACK_WEBHOOK_URL }}
 
-    # GitHub 태그 추가
-    - name: GitHub 태그 추가
-      if: success()
-      run: |
-        git config user.name "github-actions"
-        git config user.email "actions@github.com"
-        git tag "${{ env.DATE }}-${{ env.VERSION }}"
-        git push origin "${{ env.DATE }}-${{ env.VERSION }}"
+     # GitHub 태그 추가
+     - name: GitHub 태그 추가
+       if: success()
+       run: |
+         git config user.name "github-actions"
+         git config user.email "actions@github.com"
+         git tag "${{ env.DATE }}-${{ env.VERSION }}"
+         git push origin "${{ env.DATE }}-${{ env.VERSION }}"
