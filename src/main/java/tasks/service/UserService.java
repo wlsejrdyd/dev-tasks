@@ -18,7 +18,7 @@ public class UserService {
 
     @Transactional
     public void registerUser(User user) {
-        logger.info("회원가입 시도: {}", user);
+        // logger.info("회원가입 시도: {}", user);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 

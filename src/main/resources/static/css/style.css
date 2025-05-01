@@ -6,7 +6,7 @@ body {
 }
 
 .container {
-    max-width: 960px;
+    max-width: 60%;
     margin: 60px auto;
     padding: 30px;
     background-color: #ffffff;
@@ -28,7 +28,7 @@ form label {
 }
 
 form input {
-    width: 100%;
+    width: 96%;
     padding: 10px 14px;
     margin-bottom: 18px;
     border: 1px solid #ccc;

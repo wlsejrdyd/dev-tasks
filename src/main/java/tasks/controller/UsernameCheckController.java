@@ -15,4 +15,9 @@ public class UsernameCheckController {
     public boolean checkUsername(@RequestParam String username) {
         return !userRepository.existsByUsername(username);
     }
+    
+    @GetMapping("/check-email")
+    public boolean checkEmail(@RequestParam String email) {
+        return !userRepository.existsByEmail(email);
+    }
 }

@@ -19,12 +19,11 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String username;
+    private String email;
 
     @Column(nullable = false)
     private String password;
-
     private String name;
-    private String email;
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
