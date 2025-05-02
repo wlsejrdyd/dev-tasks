@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>DNS 도메인 관리</title>
+    <title>DNS 도메인 등록</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -35,34 +35,18 @@
 
     <!-- 본문 -->
     <main class="ml-64 flex-1 p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-3xl font-bold">DNS 도메인 관리</h2>
-            <a href="/dns/new" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                + 새 도메인 등록
-            </a>
-        </div>
+        <h2 class="text-2xl font-bold mb-6">DNS 도메인 등록</h2>
 
-        <table class="w-full bg-white rounded-lg shadow-md overflow-hidden">
-            <thead class="bg-gray-200">
-                <tr>
-                    <th class="p-3 text-left">도메인명</th>
-                    <th class="p-3 text-left">등록일</th>
-                    <th class="p-3 text-left">관리</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="dns : ${dnsList}">
-                    <td class="p-3" th:text="${dns.name}">example.com</td>
-                    <td class="p-3" th:text="${dns.createdAt}">2025-01-01</td>
-                    <td class="p-3 space-x-2">
-                        <a th:href="@{/dns/edit/{id}(id=${dns.id})}" class="text-blue-600 hover:underline">수정</a>
-                        <form th:action="@{/dns/delete/{id}(id=${dns.id})}" method="post" class="inline">
-                            <button type="submit" class="text-red-600 hover:underline">삭제</button>
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <form action="/dns" method="post" th:object="${dns}" class="space-y-4">
+            <div>
+                <label class="block mb-1 font-semibold">도메인명</label>
+                <input type="text" th:field="*{name}" class="w-full border px-4 py-2 rounded" required>
+            </div>
+
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                저장
+            </button>
+        </form>
     </main>
 </body>
 </html>

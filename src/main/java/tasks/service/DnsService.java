@@ -2,29 +2,31 @@ package tasks.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tasks.model.DnsDomain;
-import tasks.repository.DnsDomainRepository;
+import tasks.entity.Dns;
+import tasks.repository.DnsRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class DnsService {
 
-    private final DnsDomainRepository dnsDomainRepository;
+    private final DnsRepository dnsRepository;
 
-    public List<DnsDomain> getAllDomains() {
-        return dnsDomainRepository.findAll();
+    public List<Dns> getAllDns() {
+        return dnsRepository.findAll();
     }
 
-    public Optional<DnsDomain> getDomainByName(String name) {
-        return dnsDomainRepository.findAll().stream()
-                .filter(domain -> domain.getDomainName().equals(name))
-                .findFirst();
+    public Dns getDnsById(Long id) {
+        return dnsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 도메인이 존재하지 않습니다. id=" + id));
     }
 
-    public DnsDomain saveDomain(DnsDomain domain) {
-        return dnsDomainRepository.save(domain);
+    public void saveDns(Dns dns) {
+        dnsRepository.save(dns);
+    }
+
+    public void deleteDns(Long id) {
+        dnsRepository.deleteById(id);
     }
 }

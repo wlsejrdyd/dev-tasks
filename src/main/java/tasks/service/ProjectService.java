@@ -2,7 +2,7 @@ package tasks.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tasks.model.Project;
+import tasks.entity.Project;
 import tasks.repository.ProjectRepository;
 
 import java.util.List;
@@ -18,11 +18,12 @@ public class ProjectService {
     }
 
     public Project getProjectById(Long id) {
-        return projectRepository.findById(id).orElse(null);
+        return projectRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 프로젝트가 존재하지 않습니다. id=" + id));
     }
 
-    public Project saveProject(Project project) {
-        return projectRepository.save(project);
+    public void saveProject(Project project) {
+        projectRepository.save(project);
     }
 
     public void deleteProject(Long id) {

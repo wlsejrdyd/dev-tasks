@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import tasks.model.Project;
+import tasks.entity.Project;
 import tasks.model.IpAddress;
 import tasks.model.DnsDomain;
 import tasks.model.Attendance;

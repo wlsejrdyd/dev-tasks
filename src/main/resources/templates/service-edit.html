@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내부 서비스 수정</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800 flex">
+
+    <aside class="w-64 h-screen bg-gray-900 text-white flex flex-col fixed">
+        <div class="h-16 flex items-center justify-center text-2xl font-bold border-b border-gray-700">
+            TASKS
+        </div>
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <a href="/dashboard" class="flex items-center p-2 rounded hover:bg-gray-800 transition">
+                <i class="fas fa-home mr-3"></i> 대시보드
+            </a>
+            <a href="/services" class="flex items-center p-2 bg-gray-800 rounded">
+                <i class="fas fa-server mr-3"></i> 내부 서비스
+            </a>
+        </nav>
+        <div class="p-4 text-sm border-t border-gray-700">
+            &copy; 2025 TASKS
+        </div>
+    </aside>
+
+    <main class="ml-64 flex-1 p-6">
+        <h2 class="text-2xl font-bold mb-6">내부 서비스 수정</h2>
+
+        <form action="/services/update" method="post" th:object="${service}" class="space-y-4">
+            <input type="hidden" th:field="*{id}" />
+            <div>
+                <label class="block mb-1 font-semibold">서비스명</label>
+                <input type="text" th:field="*{name}" class="w-full border px-4 py-2 rounded" required>
+            </div>
+            <div>
+                <label class="block mb-1 font-semibold">설명</label>
+                <input type="text" th:field="*{description}" class="w-full border px-4 py-2 rounded">
+            </div>
+            <div>
+                <label class="block mb-1 font-semibold">담당자</label>
+                <input type="text" th:field="*{owner}" class="w-full border px-4 py-2 rounded">
+            </div>
+
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                수정 완료
+            </button>
+        </form>
+    </main>
+</body>
+</html>

@@ -1,7 +1,7 @@
 package tasks.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import tasks.model.Project;
+import tasks.entity.Project;
 
 import java.util.List;
 

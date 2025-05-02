@@ -2,29 +2,31 @@ package tasks.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tasks.model.IpAddress;
-import tasks.repository.IpAddressRepository;
+import tasks.entity.Ip;
+import tasks.repository.IpRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class IpService {
 
-    private final IpAddressRepository ipAddressRepository;
+    private final IpRepository ipRepository;
 
-    public List<IpAddress> getAllIps() {
-        return ipAddressRepository.findAll();
+    public List<Ip> getAllIps() {
+        return ipRepository.findAll();
     }
 
-    public Optional<IpAddress> getIpByAddress(String address) {
-        return ipAddressRepository.findAll().stream()
-                .filter(ip -> ip.getIp().equals(address))
-                .findFirst();
+    public Ip getIpById(Long id) {
+        return ipRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 IP가 존재하지 않습니다. id=" + id));
     }
 
-    public IpAddress saveIp(IpAddress ipAddress) {
-        return ipAddressRepository.save(ipAddress);
+    public void saveIp(Ip ip) {
+        ipRepository.save(ip);
+    }
+
+    public void deleteIp(Long id) {
+        ipRepository.deleteById(id);
     }
 }

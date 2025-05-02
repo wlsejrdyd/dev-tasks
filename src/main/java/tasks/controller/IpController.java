@@ -4,44 +4,49 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import tasks.model.IpAddress;
+import tasks.entity.Ip;
 import tasks.service.IpService;
 
 @Controller
-@RequestMapping("/ips")
 @RequiredArgsConstructor
 public class IpController {
 
     private final IpService ipService;
 
-    @GetMapping
-    public String listIps(Model model) {
+    @GetMapping("/ips")
+    public String ipList(Model model) {
         model.addAttribute("ips", ipService.getAllIps());
-        return "ips";
+        return "ip";
     }
 
-    @GetMapping("/new")
+    @GetMapping("/ips/new")
     public String newIpForm(Model model) {
-        model.addAttribute("ipAddress", new IpAddress());
-        return "ip-form";
+        model.addAttribute("ip", new Ip());
+        return "ip-new";
     }
 
-    @PostMapping
-    public String createIp(@ModelAttribute IpAddress ipAddress) {
-        ipService.saveIp(ipAddress);
+    @PostMapping("/ips")
+    public String createIp(@ModelAttribute Ip ip) {
+        ipService.saveIp(ip);
         return "redirect:/ips";
     }
 
-    @GetMapping("/edit/{id}")
-    public String editIp(@PathVariable Long id, Model model) {
-        model.addAttribute("ipAddress", ipService.getIpByAddress(String.valueOf(id)));
-        return "ip-form";
+    @GetMapping("/ips/edit/{id}")
+    public String editIpForm(@PathVariable Long id, Model model) {
+        Ip ip = ipService.getIpById(id);
+        model.addAttribute("ip", ip);
+        return "ip-edit";
     }
 
-    @PostMapping("/update/{id}")
-    public String updateIp(@PathVariable Long id, @ModelAttribute IpAddress ipAddress) {
-        ipAddress.setId(id);
-        ipService.saveIp(ipAddress);
+    @PostMapping("/ips/update")
+    public String updateIp(@ModelAttribute Ip ip) {
+        ipService.saveIp(ip);
+        return "redirect:/ips";
+    }
+
+    @PostMapping("/ips/delete/{id}")
+    public String deleteIp(@PathVariable Long id) {
+        ipService.deleteIp(id);
         return "redirect:/ips";
     }
 }
