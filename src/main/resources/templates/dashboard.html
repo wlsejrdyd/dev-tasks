@@ -4,18 +4,12 @@
   <meta charset="UTF-8">
   <title>대시보드</title>
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/layout.css">
 </head>
 <body>
 
 <!-- 사이드바 -->
-<div class="sidebar">
-  <h2>관리 메뉴</h2>
-  <a href="/dashboard" class="active">대시보드</a>
-  <a href="/projects">프로젝트</a>
-  <a href="/ip">IP 관리</a>
-  <a href="/dns">DNS 도메인</a>
-  <a href="/services">내부 서비스</a>
-</div>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
 <!-- 본문 영역 -->
 <div class="main-content">
@@ -27,30 +21,27 @@
       <!-- 프로젝트 관리 카드 -->
       <div class="card">
         <h2>프로젝트</h2>
-        <!-- TODO: 현재는 더미 데이터입니다. 기능 구현 후 실제 값으로 대체하세요 -->
-        <p th:text="${projectCount ?: 0} + '건 등록됨'">0건 등록됨</p>
-        <a href="#" class="btn">관리하기</a>
+        <p>🚧 진행중: <span th:text="${projectInProgress}">0</span></p>
+        <p>✅ 완료됨: <span th:text="${projectCompleted}">0</span></p>
+        <p>⏸ 보류중: <span th:text="${projectPending}">0</span></p>
       </div>
 
       <!-- IP 주소 관리 카드 -->
       <div class="card">
         <h2>IP 주소</h2>
         <p th:text="${ipCount ?: 0} + '개 등록됨'">0개 등록됨</p>
-        <a href="#" class="btn">관리하기</a>
       </div>
 
       <!-- DNS 도메인 카드 -->
       <div class="card">
         <h2>DNS 도메인</h2>
         <p th:text="${dnsCount ?: 0} + '개 등록됨'">0개 등록됨</p>
-        <a href="#" class="btn">관리하기</a>
       </div>
 
       <!-- 내부 서비스 카드 -->
       <div class="card">
         <h2>내부 서비스</h2>
         <p th:text="${serviceCount ?: 0} + '개 등록됨'">0개 등록됨</p>
-        <a href="#" class="btn">관리하기</a>
       </div>
 
     </div>

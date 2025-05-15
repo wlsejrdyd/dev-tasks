@@ -1,0 +1,14 @@
+<!-- ✅ fragment 바로 .sidebar div에 걸기 -->
+<div class="sidebar" th:fragment="sidebar">
+  <h2>관리 메뉴</h2>
+  <a href="/dashboard"
+     th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/dashboard')} ? 'active'">대시보드</a>
+  <a href="/projects"
+     th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/projects')} ? 'active'">프로젝트</a>
+  <a href="/ip"
+     th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/ip')} ? 'active'">IP 관리</a>
+  <a href="/dns"
+     th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/dns')} ? 'active'">DNS 도메인</a>
+  <a href="/services"
+     th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/services')} ? 'active'">내부 서비스</a>
+</div>

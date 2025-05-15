@@ -1,14 +1,21 @@
 package tasks.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import tasks.repository.ProjectRepository;
 
 @Service
+@RequiredArgsConstructor
 public class DashboardService {
 
-    // TODO: 현재는 더미 데이터입니다. 추후 Repository 주입 예정
+    private final ProjectRepository projectRepository;
 
-    public int getProjectCount() {
-        return 0; // TODO: ProjectRepository.count() 로 교체
+    public long getProjectCount() {
+        return projectRepository.count();
+    }
+
+    public long getProjectCountByStatus(String status) {
+        return projectRepository.countByStatus(status);
     }
 
     public int getIpCount() {

@@ -18,6 +18,12 @@ public class DashboardController {
         model.addAttribute("ipCount", dashboardService.getIpCount());
         model.addAttribute("dnsCount", dashboardService.getDnsCount());
         model.addAttribute("serviceCount", dashboardService.getServiceCount());
+
+        // 추가: 상태별 프로젝트 수
+        model.addAttribute("projectInProgress", dashboardService.getProjectCountByStatus("진행중"));
+        model.addAttribute("projectCompleted", dashboardService.getProjectCountByStatus("완료"));
+        model.addAttribute("projectPending", dashboardService.getProjectCountByStatus("보류"));
+
         return "dashboard";
     }
 }
