@@ -1,6 +1,7 @@
 package tasks.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tasks.entity.IpRange;
@@ -20,8 +21,12 @@ public class IpRangeController {
 
     @PostMapping("/api/ip-range")
     @ResponseBody
-    public IpRange saveIpRange(@RequestBody IpRange ipRange) {
-        return ipRangeService.createRangeWithIps(ipRange);
+    public ResponseEntity<?> saveIpRange(@RequestBody IpRange ipRange) {
+        try {
+            return ResponseEntity.ok(ipRangeService.createRangeWithIps(ipRange));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/api/ip-range/{id}")

@@ -12,4 +12,6 @@ public interface IpAddressRepository extends JpaRepository<IpAddress, Long> {
     List<IpAddress> findByIpContainingIgnoreCase(String keyword);
 
     List<IpAddress> findByStatus(IpAddress.Status status);
+
+    boolean existsByIp(String ip); // ✅ 중복 확인 메서드 추가
 }

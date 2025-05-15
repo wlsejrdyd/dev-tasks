@@ -30,6 +30,10 @@ public class IpRangeService {
 
         List<IpAddress> ipList = new ArrayList<>();
         for (String ip : ips) {
+            if (ipAddressRepository.existsByIp(ip)) {
+                throw new IllegalArgumentException("이미 등록된 IP가 포함되어 있습니다: " + ip);
+            }
+
             IpAddress ipAddress = IpAddress.builder()
                     .ip(ip)
                     .range(savedRange)

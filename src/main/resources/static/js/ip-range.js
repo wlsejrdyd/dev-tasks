@@ -40,7 +40,7 @@ function submitIpRangeForm(event) {
     body: JSON.stringify(data)
   })
     .then(res => {
-      if (!res.ok) throw new Error("대역 생성 실패");
+      if (!res.ok) return res.text().then(msg => { throw new Error(msg); });
       return res.json();
     })
     .then(() => {
