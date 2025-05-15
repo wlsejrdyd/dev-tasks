@@ -1,0 +1,12 @@
+<form id="ipRangeForm" th:action="@{/api/ip-range}" method="post" class="form-box" onsubmit="return submitIpRangeForm(event)">
+  <label for="cidr">CIDR 대역</label>
+  <input type="text" id="cidr" name="cidr" placeholder="예: 172.16.0.0/24" required>
+
+  <label for="description">설명</label>
+  <textarea id="description" name="description" placeholder="대역 설명 입력 (예: 웹서버용)"> </textarea>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">생성</button>
+    <button type="button" class="btn" onclick="closeIpRangeModal()">취소</button>
+  </div>
+</form>

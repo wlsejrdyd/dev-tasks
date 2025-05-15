@@ -1,0 +1,82 @@
+/* IP 주소 관리 전용 스타일 */
+
+.ip-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: box-shadow 0.3s;
+  min-height: 100px;
+  cursor: pointer;
+}
+
+.ip-card:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.ip-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ip-card .card-header h3 {
+  font-size: 1em;
+  margin: 0;
+  color: #2c3e50;
+}
+
+.ip-badge {
+  padding: 2px 8px;
+  font-size: 0.75em;
+  background-color: #e0e0e0;
+  border-radius: 12px;
+  color: #555;
+}
+
+/* 호스트 리스트 */
+.ip-list {
+  margin-top: 10px;
+}
+
+.ip-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9em;
+  padding: 4px 0;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.ip-item:hover {
+  background-color: #f9f9f9;
+}
+
+.ip-address {
+  width: 140px;
+  font-weight: 500;
+  color: #333;
+}
+
+.status {
+  font-size: 1em;
+}
+
+.btn-mini {
+  font-size: 0.75em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.btn-mini:hover {
+  background-color: #0056b3;
+}

@@ -245,15 +245,15 @@ fieldset legend {
 
 .modal {
   position: fixed;
-  top: 0;
+  z-index: 1000;
   left: 0;
+  top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0,0,0,0.4);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
+  justify-content: center;
 }
 
 .modal-content {
@@ -274,3 +274,10 @@ fieldset legend {
   cursor: pointer;
 }
 
+.modal.hidden {
+  display: none;
+}
+
+.ip-list.hidden {
+  display: none !important;
+}

@@ -1,0 +1,23 @@
+<form id="ipForm" th:action="@{/api/ip}" th:object="${ipAddress}" method="post" class="form-box" onsubmit="return submitIpForm(event)">
+  <input type="hidden" name="id" th:if="${ipAddress.id != null}" th:field="*{id}" />
+
+  <label for="ip">IP 주소</label>
+  <input type="text" id="ip" th:field="*{ip}" placeholder="예: 192.168.0.1" required>
+
+  <label for="requester">요청자</label>
+  <input type="text" id="requester" th:field="*{requester}" placeholder="이름을 입력하세요">
+
+  <label for="department">부서</label>
+  <input type="text" id="department" th:field="*{department}" placeholder="요청 부서 입력">
+
+  <label for="contact">연락처</label>
+  <input type="text" id="contact" th:field="*{contact}" placeholder="010-1234-5678" oninput="autoHyphen(this)" maxlength="13">
+
+  <label for="description">설명</label>
+  <textarea id="description" th:field="*{description}" placeholder="해당 IP의 용도나 메모"></textarea>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">저장</button>
+    <button type="button" class="btn" onclick="closeIpModal()">취소</button>
+  </div>
+</form>
