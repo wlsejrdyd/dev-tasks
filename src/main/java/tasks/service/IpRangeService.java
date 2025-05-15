@@ -20,6 +20,11 @@ public class IpRangeService {
     private final IpAddressRepository ipAddressRepository;
 
     public IpRange createRangeWithIps(IpRange ipRange) {
+        // CIDR 중복 체크
+        if (ipRangeRepository.existsByCidr(ipRange.getCidr())) {
+            throw new IllegalArgumentException("이미 등록된 CIDR 대역입니다: " + ipRange.getCidr());
+        }
+
         IpRange savedRange = ipRangeRepository.save(ipRange);
         List<String> ips = generateIpList(ipRange.getCidr());
 
