@@ -1,125 +1,72 @@
-# TASKS 프로젝트 기술 명세서 (v1.1 기준)
+# 🛠 TASKS 프로젝트
+
+**TASKS**는 조직의 프로젝트, IP, DNS, 내부 서비스 등의 자산을 통합 관리하기 위한 웹 기반 시스템입니다.  
+Spring Boot와 Gradle 기반으로 구축되었으며, 실무 환경에 적합한 직관적인 대시보드와 자산 CRUD 기능을 제공합니다.
 
 ---
 
-## 1. 프로젝트 개요
-- **프로젝트명**: TASKS
-- **버전**: v1.1
-- **목적**: 사내 프로젝트 및 리소스(IP, DNS, 내부 서비스 등)를 한눈에 확인하고 관리할 수 있는 대시보드 웹 시스템 구축
+## 🚀 기술 스택
+
+- Java 17
+- Spring Boot 3.x
+- Thymeleaf
+- Spring Security
+- MySQL (MariaDB 호환)
+- Gradle
+- HTML/CSS/JS (Vanilla + Thymeleaf)
+- [추가예정] GitHub Actions, Excel/PDF Export
 
 ---
 
-## 2. 기술 스택
-- **백엔드**: Spring Boot 3.2.0
-- **언어**: Java 17
-- **템플릿 엔진**: Thymeleaf
-- **ORM**: Spring Data JPA (with Hibernate)
-- **DB**: MariaDB 10.5
-- **빌드 툴**: Gradle
-- **프론트**: Tailwind CSS 기반 반응형 구조
-- **보안**: Spring Security (세션 로그인 방식)
+## 📌 버전 히스토리
+
+| 버전 | 주요 기능 |
+|------|-----------|
+| v1.0 | 사용자 로그인 / 회원가입 / 대시보드 레이아웃 구축 |
+| v1.1 | 프로젝트 관리 기능 CRUD |
+| v1.2 | IP 관리 / DNS 도메인 관리 / 내부 서비스 관리 (전체 리셋 후 다시시작)|
+| v1.3 | 사용자 로그인 / 회원가입 / 대시보드 레이아웃 / 프로젝트 관리 구축 |
+| v1.4 | IP 대역별 카드 시각화, 수정자/수정일 자동 기록, 대시보드에 IP 상태 요약 카드 추가 |
 
 ---
 
-## 3. 개발/운영 환경
-- **운영체제**: Rocky Linux 9.x
-- **JDK**: OpenJDK 17
-- **데이터베이스**: MariaDB 10.5 (로컬 or 내부망 연결)
-- **포트 구성**: 기본 8080포트
-- **디렉토리 예시**:
-  - `/app/tasks/dev-tasks/`: 프로젝트 루트
-  - `/app/tasks/releases/`: 빌드 파일 릴리즈 경로
-  - `/app/tasks/current/`: 심볼릭 링크 운영 디렉토리
+## 🔑 핵심 기능 요약
+
+### 사용자 인증
+- Spring Security 기반 로그인/로그아웃
+- 역할: `ROLE_USER`, `ROLE_ADMIN`
+
+### 프로젝트 관리
+- 프로젝트 생성, 수정, 삭제, 진행상태별 구분(진행중/완료/보류)
+
+### IP 관리
+- CIDR 기반 IP 대역 생성
+- IP 중복 방지
+- IP 수정 시 `수정일` 자동 갱신, `작업자` 자동 입력
+- 검색 시 카드 형태로 개별 IP 조회 가능
+
+### DNS / 내부 서비스
+- 일반 CRUD 방식으로 등록 및 수정 가능
+
+### 대시보드
+- 프로젝트 상태별 개수 요약
+- IP 통계 요약 카드 (총 대역, 활성 호스트, 비활성 호스트)
+- 향후 추가될 리소스들의 통계 카드 영역 확보
 
 ---
 
-## 4. 구현 기능 현황
+## 📂 데이터베이스 테이블 개요
 
-| 기능 이름             | 상태   | 설명                                                |
-|----------------------|--------|-----------------------------------------------------|
-| 로그인/회원가입      | ✅ 완료 | 기본 인증 구현 (Spring Security, 세션 기반)         |
-| 대시보드             | ✅ 완료 | 프로젝트/IP/DNS/서비스/근태 현황 카드형 표시        |
-| 프로젝트 관리        | ✅ 완료 | CRUD 기능 구현                                      |
-| IP 관리              | ✅ 완료 | CRUD 기능 구현                                      |
-| DNS 도메인 관리      | ✅ 완료 | CRUD 기능 구현                                      |
-| 내부 서비스 관리     | ✅ 완료 | CRUD 기능 구현                                      |
-| 관리자 페이지        | ❌ 예정 | 회원 관리, 삭제/검색 기능 추가 예정                 |
-| 사용자 권한 관리     | ❌ 예정 | ROLE_ADMIN, ROLE_USER 기반 기능 분리 예정           |
-| 엑셀 다운로드 기능   | ❌ 예정 | 각 관리 항목별 Excel 파일 다운로드 기능             |
+- `user`, `project`, `ip_range`, `ip_address`
+- 상태 구분 필드는 ENUM 사용
+- IP 주소는 `range_id`로 연결되고, 중복 방지를 위한 유니크 제약 조건 포함
 
 ---
 
-## 5. DB 테이블 구조 요약
+## 🧩 향후 계획
 
-- **users**
-  - id, username, password, role 등
+- Excel / PDF 다운로드 기능
+- 로그 상세 보기 및 관리자 권한 UI 확장
+- GitHub Actions 기반 CI/CD 배포 자동화
+- Slack 알림 연동
 
-- **projects**
-  - id, name, start_date, status
-
-- **ips**
-  - id, address, description, status
-
-- **dns**
-  - id, name, created_at
-
-- **services**
-  - id, name, url, description, status
-
-- **attendances**
-  - id, name, work_date, check_in, check_out
-
----
-
-## 6. 디렉토리 구조 요약
-
-```
-tasks/
- ┣ controller/       → 컨트롤러 계층
- ┣ service/          → 서비스 계층
- ┣ entity/           → JPA 엔티티
- ┣ model/            → DTO/화면표시용 클래스
- ┣ repository/       → JPA 인터페이스
- ┣ config/           → 시큐리티 및 설정
- ┗ resources/
-    ┣ templates/     → HTML 템플릿
-    ┗ static/        → CSS, JS
-```
-
----
-
-## 7. 빌드 및 실행
-
-```bash
-./gradlew clean bootJar
-java -jar build/libs/dev-tasks-1.1.0.jar
-```
-
----
-
-## 8. 주요 라우팅 경로
-
-| 경로            | 설명                          |
-|-----------------|-------------------------------|
-| `/login`        | 로그인 페이지                 |
-| `/signup`       | 회원가입                      |
-| `/dashboard`    | 대시보드 메인                 |
-| `/projects`     | 프로젝트 관리 페이지          |
-| `/ips`          | IP 관리 페이지                |
-| `/dns`          | DNS 도메인 관리 페이지        |
-| `/services`     | 내부 서비스 관리 페이지       |
-
----
-
-## 9. 이후 추가될 기능 (v1.2~ 기획)
-
-- [ ] 관리자 전용 회원 관리 페이지
-- [ ] 무한 스크롤 적용 (대시보드, 목록 페이지)
-- [ ] 엑셀 다운로드 기능
-- [ ] 사용자 권한 (Admin/사용자)
-- [ ] 이메일 인증 기반 회원가입
-- [ ] UI 공통 모듈화 (sidebar/header/footer 분리)
-
----
-
-(이 문서는 추후 기능이 추가될 때마다 함께 업데이트할 것)
