@@ -20,10 +20,7 @@ public class IpRangeService {
     private final IpAddressRepository ipAddressRepository;
 
     public IpRange createRangeWithIps(IpRange ipRange) {
-        // 대역 저장
         IpRange savedRange = ipRangeRepository.save(ipRange);
-
-        // 대역 기반 IP 목록 생성
         List<String> ips = generateIpList(ipRange.getCidr());
 
         List<IpAddress> ipList = new ArrayList<>();
@@ -40,7 +37,14 @@ public class IpRangeService {
         return savedRange;
     }
 
-    // CIDR 문자열 → 실제 IP 주소 리스트로 변환
+    public void deleteRange(Long id) {
+        ipAddressRepository.deleteAll(ipAddressRepository.findAll()
+                .stream()
+                .filter(ip -> ip.getRange().getId().equals(id))
+                .toList());
+        ipRangeRepository.deleteById(id);
+    }
+
     private List<String> generateIpList(String cidr) {
         List<String> result = new ArrayList<>();
         try {
@@ -57,7 +61,6 @@ public class IpRangeService {
             int network = ip & mask;
             int broadcast = network | ~mask;
 
-            // host 범위 (network+1 ~ broadcast-1)
             for (int i = network + 1; i < broadcast; i++) {
                 result.add(intToIp(i));
             }

@@ -4,13 +4,13 @@ function openIpModal() {
     .then(res => res.text())
     .then(html => {
       document.getElementById('modal-body').innerHTML = html;
-      document.getElementById('ipModal').classList.remove('hidden'); // 수정!
+      document.getElementById('ipModal').classList.remove('hidden');
     });
 }
 
 // 모달 닫기
 function closeIpModal() {
-  document.getElementById('ipModal').classList.add('hidden'); // 수정!
+  document.getElementById('ipModal').classList.add('hidden');
 }
 
 // 수정용 데이터 불러오기
@@ -19,7 +19,7 @@ function loadIp(id) {
     .then(res => res.text())
     .then(html => {
       document.getElementById('modal-body').innerHTML = html;
-      document.getElementById('ipModal').classList.remove('hidden'); // 수정!
+      document.getElementById('ipModal').classList.remove('hidden');
     });
 }
 
@@ -85,21 +85,4 @@ function autoHyphen(input) {
     else
       input.value = num.substring(0, 11).replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
   }
-}
-
-// 삭제 처리
-function deleteIp(id) {
-  if (!confirm("정말 삭제하시겠습니까?")) return;
-
-  fetch('/api/ip/' + id, {
-    method: 'DELETE'
-  })
-    .then(res => {
-      if (!res.ok) throw new Error("삭제 실패");
-      alert("삭제되었습니다.");
-      location.reload();
-    })
-    .catch(err => {
-      alert("오류 발생: " + err.message);
-    });
 }

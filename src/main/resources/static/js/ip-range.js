@@ -1,16 +1,16 @@
 // IP 리스트 접기/펼치기
 function toggleIpList(id) {
   const target = document.getElementById('range-' + id);
-  if (!target) {
-    console.warn("대상을 찾을 수 없음: range-" + id);
-    return;
-  }
+  if (!target) return;
 
-  if (target.classList.contains('hidden')) {
-    target.classList.remove('hidden');
-  } else {
-    target.classList.add('hidden');
-  }
+  // 다른 대역 닫기
+  document.querySelectorAll('.ip-list').forEach(el => {
+    if (el.id !== 'range-' + id) {
+      el.classList.add('hidden');
+    }
+  });
+
+  target.classList.toggle('hidden');
 }
 
 // 네트워크 대역 생성 모달 열기
@@ -23,12 +23,10 @@ function openIpRangeModal() {
     });
 }
 
-// 닫기
 function closeIpRangeModal() {
   document.getElementById('ipRangeModal').classList.add('hidden');
 }
 
-// 대역 생성 제출
 function submitIpRangeForm(event) {
   event.preventDefault();
 
