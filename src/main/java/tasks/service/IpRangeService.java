@@ -38,10 +38,11 @@ public class IpRangeService {
     }
 
     public void deleteRange(Long id) {
-        ipAddressRepository.deleteAll(ipAddressRepository.findAll()
-                .stream()
-                .filter(ip -> ip.getRange().getId().equals(id))
-                .toList());
+        List<IpAddress> toDelete = ipAddressRepository.findAll().stream()
+            .filter(ip -> ip.getRange() != null && id.equals(ip.getRange().getId()))
+            .toList();
+
+        ipAddressRepository.deleteAll(toDelete);
         ipRangeRepository.deleteById(id);
     }
 

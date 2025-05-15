@@ -25,7 +25,7 @@
       <a href="#" class="btn btn-primary" onclick="openIpRangeModal()">+ 네트워크 대역 생성</a>
     </div>
 
-    <!-- 검색된 IP 카드 -->
+    <!-- 🔍 검색된 IP 카드 -->
     <div class="card-grid" th:if="${ipList != null}">
       <div class="ip-card" th:each="ip : ${ipList}" th:onclick="|loadIp(${ip.id})|">
         <div class="ip-card-header">
@@ -39,28 +39,38 @@
           <p><strong>작업자:</strong> <span th:text="${ip.worker}">관리자</span></p>
           <p><strong>설명:</strong> <span th:text="${ip.description}">서버용</span></p>
         </div>
+        <div class="ip-card-footer">
+          <a href="#" class="btn-mini" th:onclick="'loadIp(' + ${ip.id} + ')'">수정</a>
+        </div>
       </div>
     </div>
 
-    <!-- 대역 리스트 카드 -->
+    <!-- 📦 전체 대역 리스트 -->
     <div class="card-grid" th:if="${ipList == null}">
       <div class="ip-card" th:each="range : ${ipRanges}">
-        <div class="ip-card-header range-toggle" th:onclick="|toggleIpList(${range.id})|">
-          <h3 th:text="${range.cidr}">172.16.0.0/24</h3>
-          <span class="ip-badge" th:text="'총 ' + ${range.ipAddresses?.size()} + '개 IP'">총 254개 IP</span>
+        <div class="ip-card-header">
+          <div style="flex-grow: 1; cursor: pointer;" th:onclick="|toggleIpList(${range.id})|">
+            <h3 th:text="${range.cidr}">172.16.0.0/24</h3>
+            <span class="ip-badge" th:text="'총 ' + ${range.ipAddresses?.size()} + '개 IP'">총 254개 IP</span>
+          </div>
+          <button class="btn-mini btn-danger" th:onclick="|deleteRange(${range.id})|" title="삭제">🗑️</button>
         </div>
         <div class="ip-list hidden" th:id="|range-${range.id}|">
-          <div class="ip-item" th:each="ip : ${range.ipAddresses}" th:onclick="|loadIp(${ip.id})|">
+          <div class="ip-item"
+               th:each="ip : ${range.ipAddresses}"
+               th:if="${ip.range != null and ip.range.id == range.id}"
+               th:onclick="|loadIp(${ip.id})|">
             <span class="ip-address" th:text="${ip.ip}">172.16.0.1</span>
             <span class="status" th:text="${ip.status == 'UP' ? '🟢' : '🔴'}">🟢</span>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 </div>
 
-<!-- IP 모달 -->
+<!-- IP 수정 모달 -->
 <div id="ipModal" class="modal hidden">
   <div class="modal-content">
     <span class="close-btn" onclick="closeIpModal()">&times;</span>

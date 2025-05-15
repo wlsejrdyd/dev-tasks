@@ -1,9 +1,7 @@
-// IP 리스트 접기/펼치기
 function toggleIpList(id) {
   const target = document.getElementById('range-' + id);
   if (!target) return;
 
-  // 다른 대역 닫기
   document.querySelectorAll('.ip-list').forEach(el => {
     if (el.id !== 'range-' + id) {
       el.classList.add('hidden');
@@ -13,7 +11,6 @@ function toggleIpList(id) {
   target.classList.toggle('hidden');
 }
 
-// 네트워크 대역 생성 모달 열기
 function openIpRangeModal() {
   fetch('/ip-range/new')
     .then(res => res.text())
@@ -39,9 +36,7 @@ function submitIpRangeForm(event) {
 
   fetch('/api/ip-range', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   })
     .then(res => {
@@ -57,4 +52,20 @@ function submitIpRangeForm(event) {
     });
 
   return false;
+}
+
+function deleteRange(id) {
+  if (!confirm("이 대역을 삭제하시겠습니까? 관련된 모든 IP도 삭제됩니다.")) return;
+
+  fetch('/api/ip-range/' + id, {
+    method: 'DELETE'
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("삭제 실패");
+      alert("삭제되었습니다.");
+      location.reload();
+    })
+    .catch(err => {
+      alert("오류 발생: " + err.message);
+    });
 }

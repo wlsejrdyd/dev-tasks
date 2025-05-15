@@ -30,6 +30,9 @@ public class IpController {
             model.addAttribute("ipList", ipList);
         } else {
             List<IpRange> ipRanges = ipRangeRepository.findAll();
+            ipRanges.forEach(range ->
+                range.getIpAddresses().removeIf(ip -> ip.getRange() == null)
+            );
             ipRanges.sort(Comparator.comparing(IpRange::getCidr));
             model.addAttribute("ipRanges", ipRanges);
         }
