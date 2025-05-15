@@ -33,14 +33,11 @@
           <span class="ip-badge" th:text="${ip.status}">UP</span>
         </div>
         <div class="ip-card-body">
-          <p><strong>요청일:</strong> <span th:text="${#dates.format(ip.requestDate, 'yyyy-MM-dd')}">날짜</span></p>
-          <p><strong>부서:</strong> <span th:text="${ip.department}">IT</span></p>
+	  <p><strong>수정일:</strong> <span th:text="${#temporals.format(ip.updatedAt, 'yyyy-MM-dd HH:mm')}">2025-05-15 23:00</span></p>
+          <p><strong>요청부서:</strong> <span th:text="${ip.department}">IT</span></p>
+          <p><strong>요청자:</strong> <span th:text="${ip.requester}">요청자</span></p>
           <p><strong>연락처:</strong> <span th:text="${ip.contact}">010-1234-5678</span></p>
-          <p><strong>작업자:</strong> <span th:text="${ip.worker}">관리자</span></p>
-          <p><strong>설명:</strong> <span th:text="${ip.description}">서버용</span></p>
-        </div>
-        <div class="ip-card-footer">
-          <a href="#" class="btn-mini" th:onclick="'loadIp(' + ${ip.id} + ')'">수정</a>
+          <p><strong>수정자:</strong> <span th:text="${ip.worker}">관리자</span></p>
         </div>
       </div>
     </div>
