@@ -29,7 +29,9 @@
       <!-- IP 주소 관리 카드 -->
       <div class="card">
         <h2>IP 주소</h2>
-        <p th:text="${ipCount ?: 0} + '개 등록됨'">0개 등록됨</p>
+        <p>🖧 추가된 대역: <span th:text="${ipRangeCount}">0</span></p>
+        <p>🟢 활성 호스트: <span th:text="${ipUpCount}">0</span></p>
+        <p>🔴 비활성 호스트: <span th:text="${ipDownCount}">0</span></p>
       </div>
 
       <!-- DNS 도메인 카드 -->
