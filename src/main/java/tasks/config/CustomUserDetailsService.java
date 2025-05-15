@@ -1,10 +1,9 @@
 package tasks.config;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
-import tasks.model.User;
+import tasks.entity.User;
 import tasks.repository.UserRepository;
 
 import java.util.Collections;

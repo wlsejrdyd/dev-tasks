@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import tasks.model.User;
+import tasks.entity.User;
 import tasks.repository.UserRepository;
 import tasks.service.UserService;
 
@@ -25,20 +25,22 @@ public class AuthController {
         return "login";
     }
 
-    @GetMapping("/register")
-    public String registerPage() {
-        return "register";
+    @GetMapping("/signup")
+    public String signupPage(Model model) {
+        model.addAttribute("user", new User());
+        return "signup";
     }
 
-    @PostMapping("/register")
-    public String register(User user, Model model) {
+    @PostMapping("/signup")
+    public String signup(@ModelAttribute User user, Model model) {
         if (!Pattern.matches("^[a-zA-Z0-9_]+$", user.getUsername())) {
             model.addAttribute("error", "아이디는 영문, 숫자, 언더스코어(_)만 사용할 수 있습니다.");
-            return "register";
+            return "signup";
         }
+
         if (!Pattern.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\{};':\"\\\\|,.<>/?]).{9,}$", user.getPassword())) {
             model.addAttribute("error", "비밀번호는 9자 이상, 대소문자/숫자/특수문자를 각각 1개 이상 포함해야 합니다.");
-            return "register";
+            return "signup";
         }
 
         userService.registerUser(user);
@@ -56,30 +58,8 @@ public class AuthController {
         return "find-username";
     }
 
-    @PostMapping("/find-username")
-    public String findUsername(@RequestParam String email, Model model) {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent()) {
-            model.addAttribute("foundUsername", user.get().getUsername());
-        } else {
-            model.addAttribute("error", "해당 이메일로 등록된 아이디가 없습니다.");
-        }
-        return "find-username";
-    }
-
     @GetMapping("/find-password")
     public String findPasswordPage() {
-        return "find-password";
-    }
-
-    @PostMapping("/find-password")
-    public String findPassword(@RequestParam String username, @RequestParam String email, Model model) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
-        if (userOpt.isPresent() && userOpt.get().getEmail().equals(email)) {
-            model.addAttribute("foundPassword", "등록된 이메일로 비밀번호 재설정 링크를 보내드렸습니다. (기능 구현 예정)");
-        } else {
-            model.addAttribute("error", "입력한 정보와 일치하는 계정이 없습니다.");
-        }
         return "find-password";
     }
 }

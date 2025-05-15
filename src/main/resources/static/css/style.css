@@ -1,91 +1,117 @@
+/* ===== 공통 레이아웃 ===== */
 body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background-color: #f5f6fa;
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f4f6f8;
+  color: #333;
+  display: flex;
+  min-height: 100vh;
 }
 
-.container {
-    max-width: 60%;
-    margin: 60px auto;
-    padding: 30px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+/* ===== 사이드바 ===== */
+.sidebar {
+  width: 220px;
+  background-color: #263238;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
 }
 
-h2 {
-    text-align: center;
-    margin-bottom: 25px;
-    color: #333;
+.sidebar h2 {
+  color: #fff;
+  font-size: 20px;
+  margin-bottom: 30px;
+  text-align: center;
 }
 
-form label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: bold;
-    color: #444;
+.sidebar a {
+  color: #b0bec5;
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  transition: background-color 0.2s;
 }
 
-form input {
-    width: 96%;
-    padding: 10px 14px;
-    margin-bottom: 18px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 15px;
+.sidebar a:hover {
+  background-color: #37474f;
+  color: #fff;
 }
 
-form button {
-    width: 100%;
-    padding: 12px;
-    background-color: #4e73df;
-    color: #fff;
-    font-size: 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+.sidebar a.active {
+  background-color: #1976d2;
+  color: #fff;
 }
 
-form button:hover {
-    background-color: #375ac2;
+/* ===== 본문 영역 ===== */
+.main-content {
+  flex: 1;
+  padding: 40px;
 }
 
-.error-message {
-    color: red;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 15px;
+/* ===== 대시보드 ===== */
+.dashboard-container {
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-.success-message {
-    color: green;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 15px;
+.dashboard-container h1 {
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #222;
 }
 
-.extra-links {
-    text-align: center;
-    margin-top: 20px;
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 16px;
+.card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 30px 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: all 0.2s ease;
 }
 
-table, th, td {
-    border: 1px solid #ccc;
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
 }
 
-th, td {
-    padding: 10px;
-    text-align: left;
+.card h2 {
+  margin-top: 0;
+  font-size: 22px;
+  color: #2a2a2a;
 }
 
-th {
-    background-color: #f4f4f4;
+.card p {
+  font-size: 18px;
+  margin: 16px 0;
+  color: #555;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #1976d2;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #125ea2;
+}
+
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -14,11 +14,10 @@ public class DashboardController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        model.addAttribute("username", dashboardService.getCurrentUsername());
-        model.addAttribute("projects", dashboardService.getProjectOverview());
-        model.addAttribute("ips", dashboardService.getIpStatus());
-        model.addAttribute("domains", dashboardService.getDnsDomains());
-        model.addAttribute("attendances", dashboardService.getAttendanceStatus());
+        model.addAttribute("projectCount", dashboardService.getProjectCount());
+        model.addAttribute("ipCount", dashboardService.getIpCount());
+        model.addAttribute("dnsCount", dashboardService.getDnsCount());
+        model.addAttribute("serviceCount", dashboardService.getServiceCount());
         return "dashboard";
     }
 }

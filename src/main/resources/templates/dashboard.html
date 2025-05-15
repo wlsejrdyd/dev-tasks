@@ -1,146 +1,61 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>대시보드</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>대시보드</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-gray-100 text-gray-800 flex">
+<body>
 
-    <!-- 사이드바 -->
-    <aside class="w-64 h-screen bg-gray-900 text-white flex flex-col fixed">
-        <div class="h-16 flex items-center justify-center text-2xl font-bold border-b border-gray-700">
-            TASKS
-        </div>
-        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-            <a href="/dashboard" class="flex items-center p-2 rounded hover:bg-gray-800 transition">
-                <i class="fas fa-home mr-3"></i> 대시보드
-            </a>
-            <a href="/projects" class="flex items-center p-2 rounded hover:bg-gray-800 transition">
-                <i class="fas fa-folder-open mr-3"></i> 프로젝트 관리
-            </a>
-            <a href="/ips" class="flex items-center p-2 rounded hover:bg-gray-800 transition">
-                <i class="fas fa-network-wired mr-3"></i> IP 관리
-            </a>
-            <a href="/dns" class="flex items-center p-2 rounded hover:bg-gray-800 transition">
-                <i class="fas fa-globe mr-3"></i> DNS 도메인
-            </a>
-            <a href="/services" class="flex items-center p-2 rounded hover:bg-gray-800 transition">
-                <i class="fas fa-server mr-3"></i> 내부 서비스
-            </a>
-            <a href="/admin" class="flex items-center p-2 rounded hover:bg-gray-800 transition">
-                <i class="fas fa-user-shield mr-3"></i> 관리자
-            </a>
-        </nav>
-        <div class="p-4 text-sm border-t border-gray-700">
-            &copy; 2025 TASKS
-        </div>
-    </aside>
+<!-- 사이드바 -->
+<div class="sidebar">
+  <h2>관리 메뉴</h2>
+  <a href="/dashboard" class="active">대시보드</a>
+  <a href="/projects">프로젝트</a>
+  <a href="/ip">IP 관리</a>
+  <a href="/dns">DNS 도메인</a>
+  <a href="/services">내부 서비스</a>
+</div>
 
-    <!-- 메인 콘텐츠 -->
-    <main class="ml-64 flex-1 p-6">
-        <h2 class="text-3xl font-bold mb-6">대시보드</h2>
+<!-- 본문 영역 -->
+<div class="main-content">
+  <div class="dashboard-container">
+    <h1>관리 대시보드</h1>
 
-        <!-- 카드 영역 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-            <div class="bg-white rounded-xl shadow-md p-6">
-                <div class="flex items-center">
-                    <div class="text-blue-500 mr-4">
-                        <i class="fas fa-folder-open fa-2x"></i>
-                    </div>
-                    <div>
-                        <p class="text-gray-600 text-sm">프로젝트 수</p>
-                        <p class="text-2xl font-bold" th:text="${projects.size()}">0</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md p-6">
-                <div class="flex items-center">
-                    <div class="text-green-500 mr-4">
-                        <i class="fas fa-network-wired fa-2x"></i>
-                    </div>
-                    <div>
-                        <p class="text-gray-600 text-sm">IP 수</p>
-                        <p class="text-2xl font-bold" th:text="${ips.size()}">0</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-md p-6">
-                <div class="flex items-center">
-                    <div class="text-yellow-500 mr-4">
-                        <i class="fas fa-globe fa-2x"></i>
-                    </div>
-                    <div>
-                        <p class="text-gray-600 text-sm">도메인 수</p>
-                        <p class="text-2xl font-bold" th:text="${domains.size()}">0</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="card-grid">
 
-        <!-- 요약 테이블: 프로젝트 -->
-        <div class="mb-10">
-            <h3 class="text-xl font-semibold mb-3">최근 프로젝트</h3>
-            <table class="w-full bg-white rounded-lg shadow-md overflow-hidden">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="p-3 text-left">이름</th>
-                        <th class="p-3 text-left">시작일</th>
-                        <th class="p-3 text-left">상태</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="p : ${projects}" th:if="${pStat.count <= 5}" th:object="${p}" th:with="pStat=${pStat}">
-                        <td class="p-3" th:text="*{name}">프로젝트A</td>
-                        <td class="p-3" th:text="*{startDate}">2025-01-01</td>
-                        <td class="p-3" th:text="*{status}">진행중</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+      <!-- 프로젝트 관리 카드 -->
+      <div class="card">
+        <h2>프로젝트</h2>
+        <!-- TODO: 현재는 더미 데이터입니다. 기능 구현 후 실제 값으로 대체하세요 -->
+        <p th:text="${projectCount ?: 0} + '건 등록됨'">0건 등록됨</p>
+        <a href="#" class="btn">관리하기</a>
+      </div>
 
-        <!-- 요약 테이블: IP -->
-        <div class="mb-10">
-            <h3 class="text-xl font-semibold mb-3">최근 IP 현황</h3>
-            <table class="w-full bg-white rounded-lg shadow-md overflow-hidden">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="p-3 text-left">IP</th>
-                        <th class="p-3 text-left">설명</th>
-                        <th class="p-3 text-left">상태</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="ip, stat : ${ips}" th:if="${stat.count <= 5}">
-                        <td class="p-3" th:text="${ip.address}">1.1.1.1</td>
-                        <td class="p-3" th:text="${ip.description}">DB 서버</td>
-                        <td class="p-3" th:text="${ip.status}">UP</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+      <!-- IP 주소 관리 카드 -->
+      <div class="card">
+        <h2>IP 주소</h2>
+        <p th:text="${ipCount ?: 0} + '개 등록됨'">0개 등록됨</p>
+        <a href="#" class="btn">관리하기</a>
+      </div>
 
-        <!-- 요약 테이블: 도메인 -->
-        <div>
-            <h3 class="text-xl font-semibold mb-3">DNS 도메인 목록</h3>
-            <table class="w-full bg-white rounded-lg shadow-md overflow-hidden">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="p-3 text-left">도메인</th>
-                        <th class="p-3 text-left">등록일</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="dns, stat : ${domains}" th:if="${stat.count <= 5}">
-                        <td class="p-3" th:text="${dns.name}">example.com</td>
-                        <td class="p-3" th:text="${dns.createdAt}">2025-01-01</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+      <!-- DNS 도메인 카드 -->
+      <div class="card">
+        <h2>DNS 도메인</h2>
+        <p th:text="${dnsCount ?: 0} + '개 등록됨'">0개 등록됨</p>
+        <a href="#" class="btn">관리하기</a>
+      </div>
 
-    </main>
+      <!-- 내부 서비스 카드 -->
+      <div class="card">
+        <h2>내부 서비스</h2>
+        <p th:text="${serviceCount ?: 0} + '개 등록됨'">0개 등록됨</p>
+        <a href="#" class="btn">관리하기</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

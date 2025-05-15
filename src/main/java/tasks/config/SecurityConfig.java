@@ -3,8 +3,6 @@ package tasks.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,38 +16,29 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/auth/**") // 회원 관련 요청만 예외 처리
-            )
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/auth/**", "/check-username", "/check-email", "/css/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/auth/login")
-		.loginProcessingUrl("/login")
+                .loginPage("/auth/login")                    // 사용자가 보는 로그인 페이지
+                .loginProcessingUrl("/auth/login")           // 🔥 실제 로그인 처리 URL 명시
+                .failureUrl("/auth/login?error")             // 실패 시 error 파라미터 포함
                 .defaultSuccessUrl("/dashboard", true)
-		.failureUrl("/auth/login?error")
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutSuccessUrl("/auth/login?logout")
+                .logoutUrl("/auth/logout")
+                .logoutSuccessUrl("/auth/login")
+                .invalidateHttpSession(true)
                 .permitAll()
             )
-            .sessionManagement(session -> session
-                .sessionFixation().migrateSession()        // 세션 고정 보호
-                .maximumSessions(1)                        // 동시 로그인 1개 제한
-                .maxSessionsPreventsLogin(true)            // 두 번째 로그인 거부
-            );
+            .userDetailsService(customUserDetailsService);
 
         return http.build();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
     }
 
     @Bean

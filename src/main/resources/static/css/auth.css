@@ -1,0 +1,86 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f4f6f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.auth-container {
+  background-color: white;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  width: 400px;
+  box-sizing: border-box;
+}
+
+.auth-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 24px;
+  color: #222;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.auth-form input[type="text"],
+.auth-form input[type="password"],
+.auth-form input[type="email"] {
+  padding: 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  height: 44px;
+}
+
+.auth-form button {
+  padding: 12px;
+  background-color: #1976d2;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.auth-form button:hover {
+  background-color: #125ea2;
+}
+
+.extra-links {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.extra-links a {
+  color: #1976d2;
+  text-decoration: none;
+  margin: 0 6px;
+}
+
+.extra-links a:hover {
+  text-decoration: underline;
+}
+
+.error-message {
+  text-align: center;
+  color: red;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.input-msg {
+  font-size: 13px;
+  padding-left: 2px;
+  margin-top: -10px;
+}

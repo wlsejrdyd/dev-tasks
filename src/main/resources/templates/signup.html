@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원가입</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/auth.css">
+  <script src="/js/signup.js" defer></script>
+</head>
+<body>
+  <div class="auth-container">
+    <h1>회원가입</h1>
+    <form th:action="@{/auth/signup}" method="post" class="auth-form" th:object="${user}">
+      <input type="text" id="username" name="username" placeholder="아이디 (영문, 숫자, _)" inputmode="latin" required>
+      <small id="username-msg" class="input-msg"></small>
+
+      <input type="password" id="password" name="password" placeholder="비밀번호 (9자 이상, 대소문자+숫자+특수문자)" required>
+      <small id="password-msg" class="input-msg"></small>
+
+      <input type="email" id="email" name="email" placeholder="이메일 주소" required>
+      <small id="email-msg" class="input-msg"></small>
+
+      <input type="text" id="name" name="name" placeholder="이름" required>
+
+      <input type="text" id="phone" name="phone" placeholder="전화번호 (010-1234-5678)" required>
+
+      <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+      <div class="form-actions" style="display: flex; gap: 10px; margin-top: 10px;">
+        <button type="submit" class="btn btn-primary" style="flex: 1;">가입하기</button>
+        <a th:href="@{/auth/login}" class="btn btn-secondary" style="flex: 1; text-align: center; line-height: 38px; background-color: #ccc; color: #333; text-decoration: none; border-radius: 6px;">로그인</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

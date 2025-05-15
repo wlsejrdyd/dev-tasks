@@ -1,1 +1,3 @@
-<script th:src="@{/js/main.js}"></script>
+<div th:fragment="script">
+  <script src="/js/signup.js" th:if="${#httpServletRequest.requestURI.contains('/signup')}"></script>
+</div>
