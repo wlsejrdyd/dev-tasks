@@ -42,11 +42,11 @@ public class DnsZoneController {
                 continue;
             }
 
-            String fqdn = extractDomain(host);
+            String maindomain = extractDomain(host);
 
             DnsRecord record = DnsRecord.builder()
                     .host(host)
-                    .fqdn(fqdn)
+                    .maindomain(maindomain)
                     .type(dnsType)
                     .ip(value)
                     .sslValid(false)

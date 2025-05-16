@@ -15,19 +15,19 @@ public class DnsRecordMigrationRunner {
     private final DnsRecordRepository dnsRecordRepository;
 
     @PostConstruct
-    public void migrateFqdnValues() {
+    public void migrateMaindomainValues() {
         List<DnsRecord> records = dnsRecordRepository.findAll();
 
         for (DnsRecord record : records) {
-            if (record.getFqdn() == null || record.getFqdn().isEmpty()) {
-                String fqdn = extractFqdn(record.getHost());
-                record.setFqdn(fqdn);
+            if (record.getMaindomain() == null || record.getMaindomain().isEmpty()) {
+                String maindomain = extractMaindomain(record.getHost());
+                record.setMaindomain(maindomain);
                 dnsRecordRepository.save(record);
             }
         }
     }
 
-    private String extractFqdn(String host) {
+    private String extractMaindomain(String host) {
         if (host == null || !host.contains(".")) return "";
         String[] parts = host.trim().toLowerCase().split("\\.");
         if (parts.length < 2) return host;

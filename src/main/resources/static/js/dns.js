@@ -50,7 +50,7 @@ function editDns(id) {
     .then(item => {
       openDnsModal();
       document.getElementById("dns-id").value = item.id;
-      document.getElementById("dns-fqdn").value = item.fqdn;
+      document.getElementById("dns-maindomain").value = item.maindomain;
       document.getElementById("dns-host").value = item.host;
       document.getElementById("dns-type").value = item.type;
       document.getElementById("dns-ip").value = item.ip;
@@ -121,8 +121,8 @@ function runSslCheck() {
     .catch(err => alert("오류 발생: " + err.message));
 }
 
-function toggleFqdn(fqdnId) {
-  const group = document.getElementById(fqdnId);
+function toggleMaindomain(maindomainId) {
+  const group = document.getElementById(maindomainId);
   if (group) {
     group.style.display = group.style.display === "none" ? "table" : "none";
   }
@@ -140,11 +140,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-function openFqdnModal() {
+function openMaindomainModal() {
   resetDnsForm();
   document.getElementById("dnsModal").classList.remove("hidden");
-  const fqdnInput = document.getElementById("dns-fqdn");
-  if (fqdnInput) {
-    fqdnInput.focus();
+  const maindomainInput = document.getElementById("dns-maindomain");
+  if (maindomainInput) {
+    maindomainInput.focus();
   }
 }

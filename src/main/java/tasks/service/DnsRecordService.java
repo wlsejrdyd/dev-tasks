@@ -26,10 +26,10 @@ public class DnsRecordService {
     }
 
     public DnsRecord save(DnsRecord dnsRecord) {
-        // fqdn이 비어 있으면 자동 추출해서 채움
-        if ((dnsRecord.getFqdn() == null || dnsRecord.getFqdn().isBlank())
+        // maindomain 이 비어 있으면 자동 추출해서 채움
+        if ((dnsRecord.getMaindomain() == null || dnsRecord.getMaindomain().isBlank())
                 && dnsRecord.getHost() != null && !dnsRecord.getHost().isBlank()) {
-            dnsRecord.setFqdn(extractDomain(dnsRecord.getHost()));
+            dnsRecord.setMaindomain(extractDomain(dnsRecord.getHost()));
         }
         return dnsRecordRepository.save(dnsRecord);
     }

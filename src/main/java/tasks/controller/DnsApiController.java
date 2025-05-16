@@ -40,7 +40,7 @@ public class DnsApiController {
         return dnsRecordService.findById(id)
                 .map(record -> {
                     record.setHost(updated.getHost());
-                    record.setFqdn(updated.getFqdn());
+                    record.setMaindomain(updated.getMaindomain());
                     record.setType(updated.getType());
                     record.setIp(updated.getIp());
                     record.setDescription(updated.getDescription());

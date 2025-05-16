@@ -22,7 +22,7 @@ public class DnsRecord {
     private String host;
 
     @Column(nullable = true)
-    private String fqdn;
+    private String maindomain;
 
     @Column(nullable = true)
     private String domain; // ✅ domain 필드 복구

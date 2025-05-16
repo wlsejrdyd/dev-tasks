@@ -25,25 +25,24 @@
                 <option value="false">비정상</option>
             </select>
             <button onclick="searchDns()">검색</button>
-            <button onclick="openFqdnModal()">+ 새 FQDN 등록</button>
-            <button onclick="downloadZoneFile()">.zone 다운로드</button>
+            <button onclick="openMaindomainModal()">+ DNS 등록</button>
+            <button onclick="downloadZoneFile()">zone 다운로드</button>
             <input type="file" id="zoneUpload" accept=".zone,.txt" onchange="uploadZoneFile(this)" hidden>
-            <button onclick="document.getElementById('zoneUpload').click()">.zone 업로드</button>
+            <button onclick="document.getElementById('zoneUpload').click()">zone 업로드</button>
         </div>
 
         <div th:each="entry : ${dnsListGroupedByDomain}">
-	    <div class="fqdn-header" th:attr="onclick=|toggleFqdn('fqdn-${entry.key}')|">
+	    <div class="maindomain-header" th:attr="onclick=|toggleMaindomain('maindomain-${entry.key}')|">
                 <h3 th:text="${entry.key}" style="cursor:pointer;"></h3>
             </div>
-            <table class="dns-table fqdn-group" th:id="|fqdn-${entry.key}|" style="display:none;">
+            <table class="dns-table maindomain-group" th:id="|maindomain-${entry.key}|" style="display:none;">
                 <thead>
                 <tr>
                     <th>호스트</th>
                     <th>TYPE</th>
                     <th>IP</th>
-                    <th>설명</th>
                     <th>SSL 확인</th>
-                    <th>관리</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -51,7 +50,6 @@
                     <td th:text="${dns.host}"></td>
                     <td th:text="${dns.type}"></td>
                     <td th:text="${dns.ip}"></td>
-                    <td th:text="${dns.description}"></td>
                     <td class="ssl-icon">
                         <span th:if="${dns.sslValid}" style="color:green;">●</span>
                         <span th:unless="${dns.sslValid}" style="color:red;">●</span>

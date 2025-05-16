@@ -28,7 +28,7 @@ public class DnsController {
         List<DnsRecord> dnsList = dnsRecordService.searchBy(keyword, type, sslValid);
 
         Map<String, List<DnsRecord>> grouped = dnsList.stream()
-                .collect(Collectors.groupingBy(r -> r.getFqdn() != null ? r.getFqdn() : "기타"));
+                .collect(Collectors.groupingBy(r -> r.getMaindomain() != null ? r.getMaindomain() : "기타"));
 
         model.addAttribute("dnsListGroupedByDomain", grouped);
         model.addAttribute("types", DnsType.values());
