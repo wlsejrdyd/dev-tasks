@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>DNS 도메인 관리</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <script src="/js/dns.js" defer></script>
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+    <div class="main-content">
+        <h1>🌐DNS 도메인 관리</h1>
+
+        <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+            <input type="text" id="searchKeyword" placeholder="검색어 입력">
+            <select id="typeFilter">
+                <option value="">전체 타입</option>
+                <option th:each="t : ${types}" th:value="${t}" th:text="${t}"></option>
+            </select>
+            <select id="sslFilter">
+                <option value="">SSL 전체</option>
+                <option value="true">정상</option>
+                <option value="false">비정상</option>
+            </select>
+            <button onclick="searchDns()">검색</button>
+            <button onclick="openDnsModal()">+ 새 DNS 등록</button>
+            <button onclick="downloadZoneFile()">.zone 다운로드</button>
+            <input type="file" id="zoneUpload" accept=".zone,.txt" onchange="uploadZoneFile(this)" hidden>
+            <button onclick="document.getElementById('zoneUpload').click()">.zone 업로드</button>
+        </div>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>호스트</th>
+                <th>TYPE</th>
+                <th>IP</th>
+                <th>설명</th>
+                <th>SSL 확인</th>
+                <th>관리</th>
+            </tr>
+            </thead>
+            <tbody id="dnsTableBody">
+            <tr th:each="dns : ${dnsList}">
+                <td th:text="${dns.host}"></td>
+                <td th:text="${dns.type}"></td>
+                <td th:text="${dns.ip}"></td>
+                <td th:text="${dns.description}"></td>
+                <td>
+                    <span th:if="${dns.sslValid}" style="color:green;">●</span>
+                    <span th:unless="${dns.sslValid}" style="color:red;">●</span>
+                </td>
+                <td>
+                    <button onclick="editDns([[${dns.id}]])">수정</button>
+                    <button onclick="deleteDns([[${dns.id}]])">삭제</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="dnsModal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeDnsModal()">×</span>
+        <div id="dns-modal-body" th:replace="dns-form :: dnsFormFragment"></div>
+    </div>
+</div>
+</body>
+</html>
+
