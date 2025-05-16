@@ -1,15 +1,12 @@
-// DNS 모달 열기
 function openDnsModal() {
   resetDnsForm();
   document.getElementById("dnsModal").classList.remove("hidden");
 }
 
-// DNS 모달 닫기
 function closeDnsModal() {
   document.getElementById("dnsModal").classList.add("hidden");
 }
 
-// DNS 폼 초기화
 function resetDnsForm() {
   const form = document.getElementById("dnsForm");
   if (form) {
@@ -18,7 +15,6 @@ function resetDnsForm() {
   }
 }
 
-// DNS 저장
 function submitDnsForm(event) {
   event.preventDefault();
   const form = document.getElementById("dnsForm");
@@ -45,7 +41,6 @@ function submitDnsForm(event) {
     .catch(err => alert("오류 발생: " + err.message));
 }
 
-// 수정 버튼
 function editDns(id) {
   fetch(`/api/dns/${id}`)
     .then(res => {
@@ -55,6 +50,7 @@ function editDns(id) {
     .then(item => {
       openDnsModal();
       document.getElementById("dns-id").value = item.id;
+      document.getElementById("dns-fqdn").value = item.fqdn;
       document.getElementById("dns-host").value = item.host;
       document.getElementById("dns-type").value = item.type;
       document.getElementById("dns-ip").value = item.ip;
@@ -64,7 +60,6 @@ function editDns(id) {
     .catch(err => alert("오류 발생: " + err.message));
 }
 
-// 삭제 버튼
 function deleteDns(id) {
   if (!confirm("정말 삭제하시겠습니까?")) return;
   fetch(`/api/dns/${id}`, { method: "DELETE" })
@@ -76,7 +71,6 @@ function deleteDns(id) {
     .catch(err => alert("오류 발생: " + err.message));
 }
 
-// .zone 업로드
 function uploadZoneFile(input) {
   const file = input.files[0];
   if (!file) return;
@@ -98,12 +92,10 @@ function uploadZoneFile(input) {
   reader.readAsText(file);
 }
 
-// .zone 다운로드
 function downloadZoneFile() {
   window.location.href = "/dns/download";
 }
 
-// 검색 실행
 function searchDns() {
   const keyword = document.getElementById("searchKeyword").value;
   const type = document.getElementById("typeFilter").value;
@@ -117,7 +109,6 @@ function searchDns() {
   location.href = url.toString();
 }
 
-// SSL 상태 전체 검사
 function runSslCheck() {
   if (!confirm("모든 호스트에 대해 SSL 상태를 검사하시겠습니까?")) return;
 
@@ -130,7 +121,13 @@ function runSslCheck() {
     .catch(err => alert("오류 발생: " + err.message));
 }
 
-// ✅ 엔터키로 검색 실행
+function toggleFqdn(fqdnId) {
+  const group = document.getElementById(fqdnId);
+  if (group) {
+    group.style.display = group.style.display === "none" ? "table" : "none";
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const keywordInput = document.getElementById("searchKeyword");
   if (keywordInput) {
@@ -142,3 +139,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+function openFqdnModal() {
+  resetDnsForm();
+  document.getElementById("dnsModal").classList.remove("hidden");
+  const fqdnInput = document.getElementById("dns-fqdn");
+  if (fqdnInput) {
+    fqdnInput.focus();
+  }
+}

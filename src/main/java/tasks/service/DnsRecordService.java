@@ -26,6 +26,11 @@ public class DnsRecordService {
     }
 
     public DnsRecord save(DnsRecord dnsRecord) {
+        // fqdn이 비어 있으면 자동 추출해서 채움
+        if ((dnsRecord.getFqdn() == null || dnsRecord.getFqdn().isBlank())
+                && dnsRecord.getHost() != null && !dnsRecord.getHost().isBlank()) {
+            dnsRecord.setFqdn(extractDomain(dnsRecord.getHost()));
+        }
         return dnsRecordRepository.save(dnsRecord);
     }
 
@@ -69,11 +74,14 @@ public class DnsRecordService {
     }
 
     private String extractDomain(String host) {
+        if (host == null || !host.contains(".")) return "";
         host = host.trim().toLowerCase();
         if (host.startsWith("http://")) host = host.substring(7);
         if (host.startsWith("https://")) host = host.substring(8);
         int slashIndex = host.indexOf('/');
         if (slashIndex > -1) host = host.substring(0, slashIndex);
-        return host;
+        String[] parts = host.split("\\.");
+        if (parts.length < 2) return host;
+        return parts[parts.length - 2] + "." + parts[parts.length - 1];
     }
 }

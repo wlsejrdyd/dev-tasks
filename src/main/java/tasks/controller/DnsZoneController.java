@@ -39,11 +39,14 @@ public class DnsZoneController {
             try {
                 dnsType = DnsType.valueOf(type);
             } catch (IllegalArgumentException e) {
-                continue; // 알 수 없는 타입은 건너뜀
+                continue;
             }
+
+            String fqdn = extractDomain(host);
 
             DnsRecord record = DnsRecord.builder()
                     .host(host)
+                    .fqdn(fqdn)
                     .type(dnsType)
                     .ip(value)
                     .sslValid(false)
@@ -72,5 +75,16 @@ public class DnsZoneController {
             }
         }
     }
-}
 
+    private String extractDomain(String host) {
+        if (host == null || !host.contains(".")) return "";
+        host = host.trim().toLowerCase();
+        if (host.startsWith("http://")) host = host.substring(7);
+        if (host.startsWith("https://")) host = host.substring(8);
+        int slashIndex = host.indexOf('/');
+        if (slashIndex > -1) host = host.substring(0, slashIndex);
+        String[] parts = host.split("\\.");
+        if (parts.length < 2) return host;
+        return parts[parts.length - 2] + "." + parts[parts.length - 1];
+    }
+}

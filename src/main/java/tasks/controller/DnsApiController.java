@@ -23,6 +23,13 @@ public class DnsApiController {
         return dnsRecordService.findAll();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<DnsRecord> getOne(@PathVariable Long id) {
+        return dnsRecordService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PostMapping
     public ResponseEntity<DnsRecord> create(@RequestBody DnsRecord dnsRecord) {
         return ResponseEntity.ok(dnsRecordService.save(dnsRecord));
@@ -33,6 +40,7 @@ public class DnsApiController {
         return dnsRecordService.findById(id)
                 .map(record -> {
                     record.setHost(updated.getHost());
+                    record.setFqdn(updated.getFqdn());
                     record.setType(updated.getType());
                     record.setIp(updated.getIp());
                     record.setDescription(updated.getDescription());
@@ -54,4 +62,3 @@ public class DnsApiController {
         return ResponseEntity.ok("SSL 상태 갱신 완료");
     }
 }
-

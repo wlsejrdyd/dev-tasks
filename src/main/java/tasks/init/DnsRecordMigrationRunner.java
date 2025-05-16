@@ -15,23 +15,22 @@ public class DnsRecordMigrationRunner {
     private final DnsRecordRepository dnsRecordRepository;
 
     @PostConstruct
-    public void migrateDomainValues() {
+    public void migrateFqdnValues() {
         List<DnsRecord> records = dnsRecordRepository.findAll();
 
         for (DnsRecord record : records) {
-            if (record.getDomain() == null || record.getDomain().isEmpty()) {
-                String domain = extractDomain(record.getHost());
-                record.setDomain(domain);
+            if (record.getFqdn() == null || record.getFqdn().isEmpty()) {
+                String fqdn = extractFqdn(record.getHost());
+                record.setFqdn(fqdn);
                 dnsRecordRepository.save(record);
             }
         }
     }
 
-    private String extractDomain(String host) {
+    private String extractFqdn(String host) {
         if (host == null || !host.contains(".")) return "";
-        String[] parts = host.split("\\.");
+        String[] parts = host.trim().toLowerCase().split("\\.");
         if (parts.length < 2) return host;
         return parts[parts.length - 2] + "." + parts[parts.length - 1];
     }
 }
-

@@ -22,7 +22,10 @@ public class DnsRecord {
     private String host;
 
     @Column(nullable = true)
-    private String domain;
+    private String fqdn;
+
+    @Column(nullable = true)
+    private String domain; // ✅ domain 필드 복구
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

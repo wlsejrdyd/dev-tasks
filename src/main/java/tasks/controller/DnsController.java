@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import tasks.entity.DnsRecord;
 import tasks.entity.DnsRecord.DnsType;
 import tasks.service.DnsRecordService;
-import tasks.utils.DnsThymeleafUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 public class DnsController {
 
     private final DnsRecordService dnsRecordService;
-    private final DnsThymeleafUtils dns; // Thymeleaf util로 주입
 
     @GetMapping("/dns")
     public String dnsPage(@RequestParam(required = false) String keyword,
@@ -30,9 +28,9 @@ public class DnsController {
         List<DnsRecord> dnsList = dnsRecordService.searchBy(keyword, type, sslValid);
 
         Map<String, List<DnsRecord>> grouped = dnsList.stream()
-                .collect(Collectors.groupingBy(record -> dns.extractDomain(record.getHost())));
+                .collect(Collectors.groupingBy(r -> r.getFqdn() != null ? r.getFqdn() : "기타"));
 
-        model.addAttribute("dnsListGroupedByDomain", grouped.entrySet());
+        model.addAttribute("dnsListGroupedByDomain", grouped);
         model.addAttribute("types", DnsType.values());
         return "dns";
     }

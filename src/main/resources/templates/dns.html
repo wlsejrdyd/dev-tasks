@@ -25,40 +25,45 @@
                 <option value="false">비정상</option>
             </select>
             <button onclick="searchDns()">검색</button>
-            <button onclick="openDnsModal()">+ 새 DNS 등록</button>
+            <button onclick="openFqdnModal()">+ 새 FQDN 등록</button>
             <button onclick="downloadZoneFile()">.zone 다운로드</button>
             <input type="file" id="zoneUpload" accept=".zone,.txt" onchange="uploadZoneFile(this)" hidden>
             <button onclick="document.getElementById('zoneUpload').click()">.zone 업로드</button>
         </div>
 
-        <table class="dns-table">
-            <thead>
-            <tr>
-                <th>FQDN</th>
-                <th>TYPE</th>
-                <th>IP</th>
-                <th>설명</th>
-                <th>SSL 확인</th>
-                <th>관리</th>
-            </tr>
-            </thead>
-            <tbody id="dnsTableBody">
-            <tr th:each="dns : ${dnsList}">
-                <td th:text="${dns.host}"></td>
-                <td th:text="${dns.type}"></td>
-                <td th:text="${dns.ip}"></td>
-                <td th:text="${dns.description}"></td>
-                <td class="ssl-icon">
-                    <span th:if="${dns.sslValid}" style="color:green;">●</span>
-                    <span th:unless="${dns.sslValid}" style="color:red;">●</span>
-                </td>
-                <td>
-                    <button onclick="editDns([[${dns.id}]])">수정</button>
-                    <button onclick="deleteDns([[${dns.id}]])">삭제</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div th:each="entry : ${dnsListGroupedByDomain}">
+	    <div class="fqdn-header" th:attr="onclick=|toggleFqdn('fqdn-${entry.key}')|">
+                <h3 th:text="${entry.key}" style="cursor:pointer;"></h3>
+            </div>
+            <table class="dns-table fqdn-group" th:id="|fqdn-${entry.key}|" style="display:none;">
+                <thead>
+                <tr>
+                    <th>호스트</th>
+                    <th>TYPE</th>
+                    <th>IP</th>
+                    <th>설명</th>
+                    <th>SSL 확인</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="dns : ${entry.value}">
+                    <td th:text="${dns.host}"></td>
+                    <td th:text="${dns.type}"></td>
+                    <td th:text="${dns.ip}"></td>
+                    <td th:text="${dns.description}"></td>
+                    <td class="ssl-icon">
+                        <span th:if="${dns.sslValid}" style="color:green;">●</span>
+                        <span th:unless="${dns.sslValid}" style="color:red;">●</span>
+                    </td>
+                    <td>
+                        <button th:onclick="|editDns(${dns.id})|">수정</button>
+                        <button th:onclick="|deleteDns(${dns.id})|">삭제</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
