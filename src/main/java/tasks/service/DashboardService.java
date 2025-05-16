@@ -9,6 +9,7 @@ import tasks.repository.ProjectRepository;
 public class DashboardService {
 
     private final ProjectRepository projectRepository;
+    private final DnsRecordService dnsRecordService;
 
     public long getProjectCount() {
         return projectRepository.count();
@@ -22,8 +23,8 @@ public class DashboardService {
         return 0; // TODO: IpRepository.count() 로 교체
     }
 
-    public int getDnsCount() {
-        return 0; // TODO: DnsRepository.count() 로 교체
+    public long getDnsCount() {
+        return dnsRecordService.countUniqueMaindomains(); // ✅ maindomain 기준
     }
 
     public int getServiceCount() {

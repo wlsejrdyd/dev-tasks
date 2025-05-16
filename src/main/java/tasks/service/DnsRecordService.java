@@ -85,7 +85,6 @@ public class DnsRecordService {
         }
     }
 
-    // ✅ zone 파일에서 레코드 등록
     public void importZoneFile(String content, String maindomain) {
         String[] lines = content.split("\\r?\\n");
 
@@ -116,5 +115,14 @@ public class DnsRecordService {
                 // 무시
             }
         }
+    }
+
+    // ✅ maindomain 중복 제거 후 개수
+    public long countUniqueMaindomains() {
+        return dnsRecordRepository.findAll().stream()
+                .map(DnsRecord::getMaindomain)
+                .filter(m -> m != null && !m.isBlank())
+                .distinct()
+                .count();
     }
 }
