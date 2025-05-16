@@ -13,5 +13,6 @@ public interface DnsRecordRepository extends JpaRepository<DnsRecord, Long> {
     List<DnsRecord> findByType(DnsType type);
 
     List<DnsRecord> findBySslValid(boolean sslValid);
-}
 
+    List<DnsRecord> findByMaindomain(String maindomain);
+}

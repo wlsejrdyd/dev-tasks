@@ -32,8 +32,12 @@
         </div>
 
         <div th:each="entry : ${dnsListGroupedByDomain}">
-	    <div class="maindomain-header" th:attr="onclick=|toggleMaindomain('maindomain-${entry.key}')|">
-                <h3 th:text="${entry.key}" style="cursor:pointer;"></h3>
+            <div class="maindomain-header">
+                <h3 th:text="${entry.key}" th:attr="onclick=|toggleMaindomain('maindomain-${entry.key}')|" style="cursor:pointer;"></h3>
+                <button class="download-btn"
+                        th:attr="onclick=|event.stopPropagation(); downloadZoneFileForMaindomain('${entry.key}')|">
+                    zone 다운로드
+                </button>
             </div>
             <table class="dns-table maindomain-group" th:id="|maindomain-${entry.key}|" style="display:none;">
                 <thead>

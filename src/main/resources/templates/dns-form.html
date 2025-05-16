@@ -1,52 +1,30 @@
-<!-- dns-form.html -->
 <div th:fragment="dnsFormFragment">
-  <form id="dnsForm" onsubmit="return submitDnsForm(event)" class="form-box">
-    <input type="hidden" name="id" id="dns-id">
+    <form id="dnsForm" onsubmit="submitDnsForm(event)">
+        <input type="hidden" id="dns-id" name="id">
 
-    <div>
-      <label for="dns-maindomain">MAIN DOMAIN (도메인)</label>
-      <input type="text" name="maindomain" id="dns-maindomain" required>
-    </div>
+        <label for="dns-maindomain">메인 도메인</label>
+        <input type="text" id="dns-maindomain" name="maindomain" placeholder="예: example.com" required>
 
-    <div>
-      <label for="dns-host">호스트</label>
-      <input type="text" name="host" id="dns-host" required>
-    </div>
+        <label for="dns-host">호스트</label>
+        <input type="text" id="dns-host" name="host" placeholder="예: www, api, mail 등">
 
-    <div class="form-row">
-      <div>
         <label for="dns-type">TYPE</label>
-        <select name="type" id="dns-type" required>
-          <option value="A">A</option>
-          <option value="AAAA">AAAA</option>
-          <option value="CNAME">CNAME</option>
-          <option value="MX">MX</option>
-          <option value="NS">NS</option>
-          <option value="TXT">TXT</option>
-          <option value="SRV">SRV</option>
+        <select id="dns-type" name="type">
+            <option value="A">A</option>
+            <option value="CNAME">CNAME</option>
+            <option value="TXT">TXT</option>
         </select>
-      </div>
-      <div>
-        <label for="dns-ip">IP 또는 대상</label>
-        <input type="text" name="ip" id="dns-ip" required>
-      </div>
-    </div>
 
-    <div>
-      <label for="dns-description">설명</label>
-      <textarea name="description" id="dns-description" rows="3"></textarea>
-    </div>
+        <label for="dns-ip">IP 또는 도메인</label>
+        <input type="text" id="dns-ip" name="ip" placeholder="예: 192.0.2.1 또는 cname.example.com">
 
-    <div>
-      <label>
-        <input type="checkbox" name="sslValid" id="dns-sslValid">
-        SSL 유효함
-      </label>
-    </div>
+        <label for="dns-description">설명</label>
+        <input type="text" id="dns-description" name="description" placeholder="(선택사항) 이 레코드에 대한 설명">
 
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">저장</button>
-      <button type="button" class="btn btn-secondary" onclick="closeDnsModal()">취소</button>
-    </div>
-  </form>
+        <label for="dns-sslValid">
+            <input type="checkbox" id="dns-sslValid" name="sslValid"> SSL 유효성
+        </label>
+
+        <button type="submit">저장</button>
+    </form>
 </div>

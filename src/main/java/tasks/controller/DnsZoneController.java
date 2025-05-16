@@ -59,23 +59,6 @@ public class DnsZoneController {
         return "ok";
     }
 
-    @GetMapping("/dns/download")
-    public void downloadZoneFile(HttpServletResponse response) throws IOException {
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition", "attachment;filename=dns_records.zone");
-
-        List<DnsRecord> records = dnsRecordService.findAll();
-
-        try (PrintWriter writer = response.getWriter()) {
-            for (DnsRecord record : records) {
-                writer.printf("%-20s IN %-6s %s\n",
-                        record.getHost(),
-                        record.getType().name(),
-                        record.getIp());
-            }
-        }
-    }
-
     private String extractDomain(String host) {
         if (host == null || !host.contains(".")) return "";
         host = host.trim().toLowerCase();

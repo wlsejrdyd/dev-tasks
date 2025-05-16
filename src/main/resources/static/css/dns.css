@@ -36,3 +36,28 @@
   font-size: 1.2em;
   text-align: center;
 }
+
+.maindomain-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9f9f9;
+  padding: 10px 14px;
+  margin-top: 14px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.download-btn {
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: #eeeeee;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.download-btn:hover {
+  background: #ddd;
+}
+

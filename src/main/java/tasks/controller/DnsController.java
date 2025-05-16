@@ -1,6 +1,11 @@
 package tasks.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,5 +38,16 @@ public class DnsController {
         model.addAttribute("dnsListGroupedByDomain", grouped);
         model.addAttribute("types", DnsType.values());
         return "dns";
+    }
+
+    @GetMapping("/dns/download")
+    public ResponseEntity<Resource> downloadZoneFile(@RequestParam String maindomain) {
+        String zoneData = dnsRecordService.generateZoneFile(maindomain);
+        ByteArrayResource resource = new ByteArrayResource(zoneData.getBytes());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + maindomain + ".zone")
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(resource);
     }
 }

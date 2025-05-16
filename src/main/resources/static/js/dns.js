@@ -21,6 +21,12 @@ function submitDnsForm(event) {
   const data = Object.fromEntries(new FormData(form));
   data.sslValid = form["sslValid"].checked;
 
+  // ✅ maindomain 유효성 검사 추가
+  if (!data.maindomain || data.maindomain.trim() === "") {
+    alert("메인 도메인은 필수 항목입니다.");
+    return;
+  }
+
   const isEdit = data.id && data.id !== "";
   const method = isEdit ? "PUT" : "POST";
   const url = "/api/dns" + (isEdit ? `/${data.id}` : "");
@@ -94,6 +100,12 @@ function uploadZoneFile(input) {
 
 function downloadZoneFile() {
   window.location.href = "/dns/download";
+}
+
+// 새로운 도메인별 다운로드
+function downloadZoneFileForMaindomain(maindomain) {
+  const encoded = encodeURIComponent(maindomain);
+  window.location.href = `/dns/download?maindomain=${encoded}`;
 }
 
 function searchDns() {
