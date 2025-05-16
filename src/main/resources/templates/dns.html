@@ -26,9 +26,7 @@
             </select>
             <button onclick="searchDns()">검색</button>
             <button onclick="openMaindomainModal()">+ DNS 등록</button>
-            <button onclick="downloadZoneFile()">zone 다운로드</button>
             <input type="file" id="zoneUpload" accept=".zone,.txt" onchange="uploadZoneFile(this)" hidden>
-            <button onclick="document.getElementById('zoneUpload').click()">zone 업로드</button>
         </div>
 
         <div th:each="entry : ${dnsListGroupedByDomain}">
@@ -59,7 +57,6 @@
                         <span th:unless="${dns.sslValid}" style="color:red;">●</span>
                     </td>
                     <td>
-                        <button th:onclick="|editDns(${dns.id})|">수정</button>
                         <button th:onclick="|deleteDns(${dns.id})|">삭제</button>
                     </td>
                 </tr>

@@ -8,7 +8,6 @@ import tasks.repository.DnsRecordRepository;
 
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.SSLSocket;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -83,6 +82,39 @@ public class DnsRecordService {
             return true;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    // ✅ zone 파일에서 레코드 등록
+    public void importZoneFile(String content, String maindomain) {
+        String[] lines = content.split("\\r?\\n");
+
+        for (String line : lines) {
+            if (line.isBlank() || line.startsWith(";")) continue;
+
+            String[] parts = line.trim().split("\\s+");
+            if (parts.length < 4) continue;
+
+            String host = parts[0];
+            String type = parts[2];
+            String ip = parts[3];
+
+            try {
+                DnsType dnsType = DnsType.valueOf(type);
+
+                DnsRecord record = DnsRecord.builder()
+                        .host(host)
+                        .maindomain(maindomain)
+                        .type(dnsType)
+                        .ip(ip)
+                        .sslValid(false)
+                        .description("Imported from .zone file")
+                        .build();
+
+                dnsRecordRepository.save(record);
+            } catch (IllegalArgumentException ignored) {
+                // 무시
+            }
         }
     }
 }

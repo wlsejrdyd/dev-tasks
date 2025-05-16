@@ -8,8 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tasks.entity.DnsRecord;
 import tasks.entity.DnsRecord.DnsType;
 import tasks.service.DnsRecordService;
@@ -49,5 +49,18 @@ public class DnsController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + maindomain + ".zone")
                 .contentType(MediaType.TEXT_PLAIN)
                 .body(resource);
+    }
+
+    @PostMapping("/dns/upload")
+    @ResponseBody
+    public ResponseEntity<String> uploadZoneFile(@RequestParam("maindomain") String maindomain,
+                                                 @RequestPart("file") MultipartFile file) {
+        try {
+            String content = new String(file.getBytes());
+            dnsRecordService.importZoneFile(content, maindomain);
+            return ResponseEntity.ok("업로드 성공");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("업로드 실패: " + e.getMessage());
+        }
     }
 }

@@ -21,7 +21,6 @@ function submitDnsForm(event) {
   const data = Object.fromEntries(new FormData(form));
   data.sslValid = form["sslValid"].checked;
 
-  // ✅ maindomain 유효성 검사 추가
   if (!data.maindomain || data.maindomain.trim() === "") {
     alert("메인 도메인은 필수 항목입니다.");
     return;
@@ -77,32 +76,10 @@ function deleteDns(id) {
     .catch(err => alert("오류 발생: " + err.message));
 }
 
-function uploadZoneFile(input) {
-  const file = input.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    fetch("/dns/upload", {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body: reader.result,
-    })
-      .then(res => {
-        if (!res.ok) throw new Error("업로드 실패");
-        alert("업로드 성공");
-        location.reload();
-      })
-      .catch(err => alert("오류 발생: " + err.message));
-  };
-  reader.readAsText(file);
-}
-
 function downloadZoneFile() {
   window.location.href = "/dns/download";
 }
 
-// 새로운 도메인별 다운로드
 function downloadZoneFileForMaindomain(maindomain) {
   const encoded = encodeURIComponent(maindomain);
   window.location.href = `/dns/download?maindomain=${encoded}`;
@@ -138,6 +115,39 @@ function toggleMaindomain(maindomainId) {
   if (group) {
     group.style.display = group.style.display === "none" ? "table" : "none";
   }
+}
+
+function triggerZoneUpload() {
+  const fileInput = document.getElementById("zoneFileInput");
+  if (fileInput) fileInput.click();
+}
+
+function uploadZoneInForm() {
+  const fileInput = document.getElementById("zoneFileInput");
+  const maindomainInput = document.getElementById("dns-maindomain");
+  const file = fileInput?.files[0];
+  const maindomain = maindomainInput?.value;
+
+  if (!file) return;
+  if (!maindomain || maindomain.trim() === "") {
+    alert("먼저 메인 도메인을 입력해주세요.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("maindomain", maindomain);
+
+  fetch("/dns/upload", {
+    method: "POST",
+    body: formData
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("업로드 실패");
+      alert("업로드 성공");
+      location.reload();
+    })
+    .catch(err => alert("오류 발생: " + err.message));
 }
 
 document.addEventListener("DOMContentLoaded", () => {

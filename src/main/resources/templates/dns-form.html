@@ -3,7 +3,13 @@
         <input type="hidden" id="dns-id" name="id">
 
         <label for="dns-maindomain">메인 도메인</label>
-        <input type="text" id="dns-maindomain" name="maindomain" placeholder="예: example.com" required>
+        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
+            <input type="text" id="dns-maindomain" name="maindomain"
+                   placeholder="예: example.com" required style="flex: 1; height: 32px; padding: 4px;">
+            <button type="button" onclick="triggerZoneUpload()"
+                    style="height: 32px; padding: 0 10px;">zone 업로드</button>
+            <input type="file" id="zoneFileInput" accept=".zone,.txt" onchange="uploadZoneInForm()" hidden>
+        </div>
 
         <label for="dns-host">호스트</label>
         <input type="text" id="dns-host" name="host" placeholder="예: www, api, mail 등">
