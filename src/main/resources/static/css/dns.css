@@ -1,0 +1,38 @@
+.dns-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.filters {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dns-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.dns-table th,
+.dns-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 0.95em;
+}
+
+.dns-table th {
+  background-color: #f9f9f9;
+  font-weight: bold;
+  color: #333;
+}
+
+.ssl-icon {
+  font-size: 1.2em;
+  text-align: center;
+}

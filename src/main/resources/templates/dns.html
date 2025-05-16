@@ -4,15 +4,16 @@
     <title>DNS 도메인 관리</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/dns.css">
     <script src="/js/dns.js" defer></script>
 </head>
 <body>
 <div class="dashboard-wrapper">
     <div th:replace="fragments/sidebar :: sidebar"></div>
-    <div class="main-content">
-        <h1>🌐DNS 도메인 관리</h1>
+    <div class="main-content dns-wrapper">
+        <h1>🌐 DNS 도메인 관리</h1>
 
-        <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+        <div class="filters">
             <input type="text" id="searchKeyword" placeholder="검색어 입력">
             <select id="typeFilter">
                 <option value="">전체 타입</option>
@@ -30,10 +31,10 @@
             <button onclick="document.getElementById('zoneUpload').click()">.zone 업로드</button>
         </div>
 
-        <table class="table">
+        <table class="dns-table">
             <thead>
             <tr>
-                <th>호스트</th>
+                <th>FQDN</th>
                 <th>TYPE</th>
                 <th>IP</th>
                 <th>설명</th>
@@ -47,7 +48,7 @@
                 <td th:text="${dns.type}"></td>
                 <td th:text="${dns.ip}"></td>
                 <td th:text="${dns.description}"></td>
-                <td>
+                <td class="ssl-icon">
                     <span th:if="${dns.sslValid}" style="color:green;">●</span>
                     <span th:unless="${dns.sslValid}" style="color:red;">●</span>
                 </td>
@@ -69,4 +70,3 @@
 </div>
 </body>
 </html>
-

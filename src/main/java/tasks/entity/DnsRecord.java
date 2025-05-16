@@ -2,6 +2,7 @@ package tasks.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,6 +21,9 @@ public class DnsRecord {
     @Column(nullable = false)
     private String host;
 
+    @Column(nullable = true)
+    private String domain;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private DnsType type;
@@ -30,8 +34,8 @@ public class DnsRecord {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Builder.Default
     @Column(nullable = false)
+    @Builder.Default
     private boolean sslValid = false;
 
     private LocalDateTime createdAt;

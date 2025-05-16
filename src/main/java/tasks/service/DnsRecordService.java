@@ -37,6 +37,14 @@ public class DnsRecordService {
         return dnsRecordRepository.findByHostContainingIgnoreCaseOrIpContainingIgnoreCase(keyword, keyword);
     }
 
+    public List<DnsRecord> searchBy(String keyword, DnsType type, Boolean sslValid) {
+        return dnsRecordRepository.findAll().stream()
+                .filter(r -> keyword == null || r.getHost().toLowerCase().contains(keyword.toLowerCase()) || r.getIp().toLowerCase().contains(keyword.toLowerCase()))
+                .filter(r -> type == null || r.getType() == type)
+                .filter(r -> sslValid == null || r.isSslValid() == sslValid)
+                .toList();
+    }
+
     public void checkAndUpdateAllSsl() {
         List<DnsRecord> records = findAll();
         for (DnsRecord record : records) {
@@ -69,4 +77,3 @@ public class DnsRecordService {
         return host;
     }
 }
-
