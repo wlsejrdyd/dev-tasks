@@ -3,6 +3,7 @@ package tasks.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,7 +26,7 @@ public class DnsRecord {
     private String maindomain;
 
     @Column(nullable = true)
-    private String domain; // ✅ domain 필드 복구
+    private String domain;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -40,6 +41,9 @@ public class DnsRecord {
     @Column(nullable = false)
     @Builder.Default
     private boolean sslValid = false;
+
+    @Column(name = "ssl_expiry_date")
+    private LocalDate sslExpiryDate;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

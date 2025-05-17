@@ -7,7 +7,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import tasks.config.CustomUserDetailsService;
 
 @Configuration
 @RequiredArgsConstructor
@@ -20,13 +19,20 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/check-username", "/check-email", "/css/**", "/js/**").permitAll()
+                .requestMatchers(
+                    "/auth/**",
+                    "/check-username",
+                    "/check-email",
+                    "/css/**",
+                    "/js/**",
+                    "/api/**"              // ✅ API 경로 명시적 허용 또는 인증 요구
+                ).permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/auth/login")                    // 사용자가 보는 로그인 페이지
-                .loginProcessingUrl("/auth/login")           // 🔥 실제 로그인 처리 URL 명시
-                .failureUrl("/auth/login?error")             // 실패 시 error 파라미터 포함
+                .loginPage("/auth/login")
+                .loginProcessingUrl("/auth/login")
+                .failureUrl("/auth/login?error")
                 .defaultSuccessUrl("/dashboard", true)
                 .permitAll()
             )

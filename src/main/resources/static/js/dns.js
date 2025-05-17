@@ -110,6 +110,18 @@ function runSslCheck() {
     .catch(err => alert("오류 발생: " + err.message));
 }
 
+function runSslExpiryCheck() {
+  if (!confirm("모든 호스트의 SSL 만료일을 확인하고 갱신하시겠습니까?")) return;
+
+  fetch("/api/dns/ssl-expiry-check", { method: "POST" })
+    .then(res => {
+      if (!res.ok) throw new Error("만료일 검사 실패");
+      alert("SSL 만료일이 갱신되었습니다.");
+      location.reload();
+    })
+    .catch(err => alert("오류 발생: " + err.message));
+}
+
 function toggleMaindomain(maindomainId) {
   const group = document.getElementById(maindomainId);
   if (group) {

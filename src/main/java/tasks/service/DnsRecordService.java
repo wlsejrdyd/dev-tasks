@@ -6,8 +6,13 @@ import tasks.entity.DnsRecord;
 import tasks.entity.DnsRecord.DnsType;
 import tasks.repository.DnsRecordRepository;
 
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import java.security.cert.X509Certificate;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -66,7 +71,7 @@ public class DnsRecordService {
 
         for (DnsRecord record : records) {
             try {
-                boolean valid = checkSslValidity(record.getHost());
+                boolean valid = checkSslValidity(record.getHost(), record.getMaindomain());
                 record.setSslValid(valid);
                 dnsRecordRepository.save(record);
             } catch (Exception e) {
@@ -76,8 +81,24 @@ public class DnsRecordService {
         }
     }
 
-    private boolean checkSslValidity(String host) {
-        try (var socket = SSLSocketFactory.getDefault().createSocket(host, 443)) {
+    public void checkAndUpdateAllSslExpiry() {
+        List<DnsRecord> records = dnsRecordRepository.findAll();
+
+        for (DnsRecord record : records) {
+            try {
+                LocalDate expiry = getSslExpiryDate(record.getHost(), record.getMaindomain());
+                record.setSslExpiryDate(expiry);
+                dnsRecordRepository.save(record);
+            } catch (Exception e) {
+                record.setSslExpiryDate(null);
+                dnsRecordRepository.save(record);
+            }
+        }
+    }
+
+    private boolean checkSslValidity(String host, String maindomain) {
+        String fqdn = buildFqdn(host, maindomain);
+        try (var socket = SSLSocketFactory.getDefault().createSocket(fqdn, 443)) {
             ((SSLSocket) socket).startHandshake();
             return true;
         } catch (Exception e) {
@@ -85,8 +106,25 @@ public class DnsRecordService {
         }
     }
 
+    private LocalDate getSslExpiryDate(String host, String maindomain) throws Exception {
+        String fqdn = buildFqdn(host, maindomain);
+        try (var socket = (SSLSocket) SSLSocketFactory.getDefault().createSocket(fqdn, 443)) {
+            socket.startHandshake();
+            SSLSession session = socket.getSession();
+            X509Certificate cert = (X509Certificate) session.getPeerCertificates()[0];
+            Instant instant = cert.getNotAfter().toInstant();
+            return instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        }
+    }
+
+    private String buildFqdn(String host, String maindomain) {
+        if (host == null || host.isBlank()) return maindomain;
+        return host + "." + maindomain;
+    }
+
     public void importZoneFile(String content, String maindomain) {
         String[] lines = content.split("\\r?\\n");
+        String lastHost = null;
 
         for (String line : lines) {
             if (line.isBlank() || line.startsWith(";")) continue;
@@ -97,6 +135,17 @@ public class DnsRecordService {
             String host = parts[0];
             String type = parts[2];
             String ip = parts[3];
+
+            // ✅ host 처리 로직
+            if (host.equals("@")) {
+                host = maindomain;
+            } else if (host.equals("")) {
+                host = lastHost;
+            } else if (host.endsWith(".")) {
+                host = host.substring(0, host.length() - 1);
+            }
+
+            lastHost = host;
 
             try {
                 DnsType dnsType = DnsType.valueOf(type);
@@ -117,7 +166,6 @@ public class DnsRecordService {
         }
     }
 
-    // ✅ maindomain 중복 제거 후 개수
     public long countUniqueMaindomains() {
         return dnsRecordRepository.findAll().stream()
                 .map(DnsRecord::getMaindomain)

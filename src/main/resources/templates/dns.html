@@ -26,6 +26,8 @@
             </select>
             <button onclick="searchDns()">검색</button>
             <button onclick="openMaindomainModal()">+ DNS 등록</button>
+            <button onclick="runSslCheck()">SSL 상태 갱신</button>
+            <button onclick="runSslExpiryCheck()">SSL 만료일 갱신</button>
             <input type="file" id="zoneUpload" accept=".zone,.txt" onchange="uploadZoneFile(this)" hidden>
         </div>
 
@@ -44,6 +46,7 @@
                     <th>TYPE</th>
                     <th>IP</th>
                     <th>SSL 확인</th>
+                    <th>만료일</th> <!-- ✅ 추가 -->
                     <th></th>
                 </tr>
                 </thead>
@@ -58,6 +61,7 @@
                         <span th:if="${dns.sslValid}" style="color:green;">●</span>
                         <span th:unless="${dns.sslValid}" style="color:red;">●</span>
                     </td>
+                    <td th:text="${dns.sslExpiryDate != null ? dns.sslExpiryDate : '-'}">-</td> <!-- ✅ 추가 -->
                     <td>
                         <button th:onclick="|deleteDns(${dns.id})|">삭제</button>
                     </td>

@@ -45,6 +45,7 @@ public class DnsApiController {
                     record.setIp(updated.getIp());
                     record.setDescription(updated.getDescription());
                     record.setSslValid(updated.isSslValid());
+                    record.setSslExpiryDate(updated.getSslExpiryDate());
                     return ResponseEntity.ok(dnsRecordService.save(record));
                 })
                 .orElse(ResponseEntity.notFound().build());
@@ -60,5 +61,11 @@ public class DnsApiController {
     public ResponseEntity<?> checkSslValidityForAll() {
         dnsRecordService.checkAndUpdateAllSsl();
         return ResponseEntity.ok("SSL 상태 갱신 완료");
+    }
+
+    @PostMapping("/ssl-expiry-check")
+    public ResponseEntity<?> checkSslExpiryForAll() {
+        dnsRecordService.checkAndUpdateAllSslExpiry();
+        return ResponseEntity.ok("SSL 만료일 갱신 완료");
     }
 }
