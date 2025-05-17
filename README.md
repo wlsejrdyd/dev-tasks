@@ -78,5 +78,5 @@ Spring Boot와 Gradle 기반으로 구축되었으며, 실무 환경에 적합�
 
 - Excel / PDF 다운로드 기능
 - 로그 상세 보기 및 관리자 권한 UI 확장
-- GitHub Actions 기반 CI/CD 배포 자동화
-- Slack 알림 연동
+- 마이페이지 구현
+- 근태관리 추가
