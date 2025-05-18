@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내부 서비스 관리</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/internal-service.css">
+    <script src="/js/internal-service.js" defer></script>
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+    <div class="main-content">
+        <h1>🛠 내부 서비스 관리</h1>
+
+        <div class="filters">
+            <button id="addServiceBtn">+ 서비스 등록</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>서비스 이름</th>
+                    <th>설명</th>
+                    <th>접속 주소</th>
+                    <th>담당자</th>
+                    <th>등록일</th>
+                    <th>수정</th>
+                    <th>삭제</th>
+                </tr>
+            </thead>
+            <tbody id="serviceTableBody">
+                <!-- 데이터는 JS로 비동기 렌더링 예정 -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 서비스 등록/수정 모달 -->
+<div id="serviceModal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3 id="modalTitle">서비스 등록</h3>
+        <form id="serviceForm">
+            <input type="hidden" id="serviceId">
+            <label for="name">서비스 이름 *</label>
+            <input type="text" id="name" required>
+
+            <label for="description">설명</label>
+            <textarea id="description"></textarea>
+
+            <label for="url">접속 주소 *</label>
+            <input type="text" id="url" required placeholder="http:// 또는 https:// 포함">
+
+            <label for="manager">담당자 *</label>
+            <input type="text" id="manager" required>
+
+            <button type="submit">저장</button>
+        </form>
+    </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+<div id="confirmDeleteModal" class="modal hidden">
+    <div class="modal-content">
+        <p>정말 삭제하시겠습니까?</p>
+        <button id="confirmDeleteBtn">삭제</button>
+        <button id="cancelDeleteBtn">취소</button>
+    </div>
+</div>
+</body>
+</html>
