@@ -21,15 +21,16 @@ public class DashboardController {
         model.addAttribute("dnsCount", dashboardService.getDnsCount());
         model.addAttribute("serviceCount", dashboardService.getServiceCount());
 
-        // 추가: 상태별 프로젝트 수
         model.addAttribute("projectInProgress", dashboardService.getProjectCountByStatus("진행중"));
         model.addAttribute("projectCompleted", dashboardService.getProjectCountByStatus("완료"));
         model.addAttribute("projectPending", dashboardService.getProjectCountByStatus("보류"));
 
-        // ✅ IP 통계 추가
         model.addAttribute("ipRangeCount", dashboardIpStatService.getIpRangeCount());
         model.addAttribute("ipUpCount", dashboardIpStatService.getIpUpCount());
         model.addAttribute("ipDownCount", dashboardIpStatService.getIpDownCount());
+
+        // ✅ 내부 서비스 수 개별 카드용
+        model.addAttribute("internalServiceTotal", dashboardService.getInternalServiceTotalCount());
 
         return "dashboard";
     }

@@ -34,16 +34,16 @@
         <p>🔴 비활성 호스트: <span th:text="${ipDownCount}">0</span></p>
       </div>
 
-      <!-- DNS 도메인 카드 (수정됨) -->
+      <!-- DNS 도메인 카드 -->
       <div class="card">
         <h2>DNS 도메인</h2>
-        <p>관리 중인 DNS 갯수: <span th:text="${dnsCount ?: 0}">0</span>개</p>
+        <p>🌐관리 중인 DNS 갯수: <span th:text="${dnsCount ?: 0}">0</span>개</p>
       </div>
 
       <!-- 내부 서비스 카드 -->
       <div class="card">
         <h2>내부 서비스</h2>
-        <p th:text="${serviceCount ?: 0} + '개 등록됨'">0개 등록됨</p>
+        <p>🛠등록 된 서비스 :<span th:text="${internalServiceTotal ?: 0}">0</span>개</p>
       </div>
 
     </div>
