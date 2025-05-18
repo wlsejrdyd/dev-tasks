@@ -11,4 +11,6 @@
      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/dns')} ? 'active'">DNS 도메인</a>
   <a href="/services"
      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/services')} ? 'active'">내부 서비스</a>
+  <a href="/attendance"
+     th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/attendance')} ? 'active'">근태 관리</a>
 </div>
