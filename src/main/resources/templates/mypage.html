@@ -11,10 +11,10 @@
 <div class="dashboard-wrapper">
   <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-  <div class="main-content" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+  <div class="main-content" style="width: 100%; overflow-x: hidden; box-sizing: border-box;">
     <div class="dashboard-container" style="width: 100%;">
 
-      <div class="form-box" style="max-width: 700px; width: 100%;">
+      <div class="form-box" style="max-width: 700px; width: 100%; box-sizing: border-box;">
         <h1>👤 마이페이지</h1>
 
         <form th:action="@{/mypage}" method="post" style="display: flex; flex-direction: column; gap: 16px;">
