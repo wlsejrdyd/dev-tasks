@@ -5,14 +5,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tasks.dto.AttendanceSaveRequest;
+import tasks.dto.AttendanceDetailRequest;
 import tasks.entity.AttendanceSummary;
+import tasks.entity.AttendanceRecord;
 import tasks.entity.User;
 import tasks.entity.User.Role;
 import tasks.repository.AttendanceSummaryRepository;
+import tasks.repository.AttendanceRecordRepository;
 import tasks.repository.UserRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,6 +27,7 @@ public class AttendanceApiController {
 
     private final UserRepository userRepository;
     private final AttendanceSummaryRepository summaryRepository;
+    private final AttendanceRecordRepository recordRepository;
 
     @PostMapping("/save-summary")
     @Transactional
@@ -57,7 +62,7 @@ public class AttendanceApiController {
                             .username(req.getName())
                             .email(req.getName() + "@auto.local")
                             .password("!")
-                            .role(Role.USER)  // ✅ 내부 enum 사용
+                            .role(Role.USER)
                             .createdAt(LocalDateTime.now())
                             .build()));
 
@@ -79,5 +84,49 @@ public class AttendanceApiController {
         }
 
         return ResponseEntity.ok("✅ 저장 완료");
+    }
+
+    @PostMapping("/save-detail")
+    @Transactional
+    public ResponseEntity<String> saveDetail(@RequestBody List<AttendanceDetailRequest> requestList) {
+        int saved = 0, skipped = 0;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        for (AttendanceDetailRequest req : requestList) {
+            try {
+                if (req.getName() == null || req.getName().isBlank()) {
+                    skipped++;
+                    continue;
+                }
+
+                User user = userRepository.findByName(req.getName())
+                        .orElseGet(() -> userRepository.save(User.builder()
+                                .name(req.getName())
+                                .username(req.getName())
+                                .email(req.getName() + "@auto.local")
+                                .password("!")
+                                .role(Role.USER)
+                                .createdAt(LocalDateTime.now())
+                                .build()));
+
+                AttendanceRecord record = AttendanceRecord.builder()
+                        .user(user)
+                        .type(req.getType())
+                        .startDate(LocalDate.parse(req.getStartDate(), formatter))
+                        .endDate(LocalDate.parse(req.getEndDate(), formatter))
+                        .days((int) req.getDays()) // float 값이 아닌 정수로 저장됨
+                        .reason(req.getReason())
+                        .build();
+
+                recordRepository.save(record);
+                saved++;
+
+            } catch (Exception e) {
+                skipped++;
+            }
+        }
+
+        return ResponseEntity.ok("상세 내역 저장 완료: 저장 " + saved + "건, 건너뜀 " + skipped + "건");
     }
 }

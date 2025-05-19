@@ -53,21 +53,9 @@
             </tbody>
         </table>
 
-        <!-- 🔵 카드형 통계 -->
-        <div class="card-grid">
-            <div class="card" th:each="summary : ${summaryList}">
-                <h3 th:text="${summary.userName}">홍길동</h3>
-                <p>총 연차 사용: <span th:text="${summary.annualLeaveCount}">0</span>일</p>
-                <p>총 대휴 사용: <span th:text="${summary.dayOffUsed}">0</span>일</p>
-                <p>총 대휴 부여: <span th:text="${summary.dayOffGiven}">0</span>일</p>
-                <p>기타: <span th:text="${summary.etcCount}">0</span>일</p>
-                <p>주말/연휴 근무: <span th:text="${summary.weekendOrHolidayWorkCount}">0</span>회</p>
-            </div>
-        </div>
-
-        <!-- 🟢 상세 내역 -->
+        <!-- 🟢 상세 내역 테이블 -->
         <h2 style="margin-top: 40px;">📋 상세 내역</h2>
-        <table class="data-table">
+        <table class="attendance-table">
             <thead>
                 <tr>
                     <th>이름</th>
@@ -80,12 +68,12 @@
             </thead>
             <tbody>
                 <tr th:each="record : ${records}">
-                    <td th:text="${record.user.name}">홍길동</td>
-                    <td th:text="${record.type}">연차 사용</td>
-                    <td th:text="${record.startDate}">2025-01-01</td>
-                    <td th:text="${record.endDate}">2025-01-02</td>
-                    <td th:text="${record.days}">1.0</td>
-                    <td th:text="${record.reason}">개인 사유</td>
+                    <td contenteditable="true" th:text="${record.user.name}">홍길동</td>
+                    <td contenteditable="true" th:text="${record.type}">연차 사용</td>
+                    <td contenteditable="true" th:text="${record.startDate}">2025-01-01</td>
+                    <td contenteditable="true" th:text="${record.endDate}">2025-01-02</td>
+                    <td contenteditable="true" th:text="${record.days}">1.0</td>
+                    <td contenteditable="true" th:text="${record.reason}">개인 사유</td>
                 </tr>
             </tbody>
         </table>
