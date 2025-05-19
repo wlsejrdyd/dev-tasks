@@ -1,0 +1,7 @@
+<div th:fragment="topbar" class="top-bar">
+  <span id="logout-timer">자동 로그아웃까지 10:00</span>
+  <form th:action="@{/auth/logout}" method="get" style="display: inline;">
+    <button type="submit">로그아웃</button>
+  </form>
+  <img src="/img/avatar.png" alt="프로필" onclick="location.href='/mypage'">
+</div>

@@ -8,7 +8,7 @@
   <a href="/ip"
      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/ip')} ? 'active'">IP 관리</a>
   <a href="/dns"
-     th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/dns')} ? 'active'">DNS 도메인</a>
+     th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/dns')} ? 'active'">DNS 관리</a>
   <a href="/services"
      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/services')} ? 'active'">내부 서비스</a>
   <a href="/attendance"

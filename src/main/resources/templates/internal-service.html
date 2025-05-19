@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>내부 서비스 관리</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="/css/internal-service.css">
     <script src="/js/internal-service.js" defer></script>
+    <script src="/js/logout-timer.js" defer></script>
 </head>
 <body>
 <div class="dashboard-wrapper">
     <div th:replace="fragments/sidebar :: sidebar"></div>
+    <div th:replace="~{fragments/topbar :: topbar}"></div>
+
     <div class="main-content">
         <h1>🛠 내부 서비스 관리</h1>
 
