@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>마이페이지 | TASKS</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <h1>마이페이지</h1>
+  <form th:action="@{/mypage}" method="post">
+    <label>아이디: <span th:text="${user.username}">아이디</span></label><br>
+
+    <label for="name">이름:</label>
+    <input type="text" id="name" name="name" th:value="${user.name}" required><br>
+
+    <label for="email">이메일:</label>
+    <input type="email" id="email" name="email" th:value="${user.email}" required><br>
+
+    <label for="phone">전화번호:</label>
+    <input type="text" id="phone" name="phone" th:value="${user.phone}"><br>
+
+    <hr>
+
+    <h3>비밀번호 변경</h3>
+    <label for="currentPassword">현재 비밀번호:</label>
+    <input type="password" id="currentPassword" name="currentPassword"><br>
+
+    <label for="newPassword">새 비밀번호:</label>
+    <input type="password" id="newPassword" name="newPassword"><br>
+
+    <button type="submit">저장하기</button>
+  </form>
+
+  <p th:if="${error}" th:text="${error}" style="color: red;"></p>
+  <p th:if="${success}" th:text="${success}" style="color: green;"></p>
+</body>
+</html>
