@@ -2,36 +2,78 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>마이페이지 | TASKS</title>
+  <title>마이페이지</title>
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/layout.css">
 </head>
 <body>
-  <h1>마이페이지</h1>
-  <form th:action="@{/mypage}" method="post">
-    <label>아이디: <span th:text="${user.username}">아이디</span></label><br>
 
-    <label for="name">이름:</label>
-    <input type="text" id="name" name="name" th:value="${user.name}" required><br>
+<div class="dashboard-wrapper">
+  <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-    <label for="email">이메일:</label>
-    <input type="email" id="email" name="email" th:value="${user.email}" required><br>
+  <div class="main-content" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <div class="dashboard-container" style="width: 100%;">
 
-    <label for="phone">전화번호:</label>
-    <input type="text" id="phone" name="phone" th:value="${user.phone}"><br>
+      <div class="form-box" style="max-width: 700px; width: 100%;">
+        <h1>👤 마이페이지</h1>
 
-    <hr>
+        <form th:action="@{/mypage}" method="post" style="display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <label style="font-weight: bold;">아이디:</label><br>
+            <div th:text="${user.username}" style="margin-top: 4px; font-weight: bold;"></div>
+          </div>
 
-    <h3>비밀번호 변경</h3>
-    <label for="currentPassword">현재 비밀번호:</label>
-    <input type="password" id="currentPassword" name="currentPassword"><br>
+          <div>
+            <label for="name">이름</label><br>
+            <input type="text" id="name" name="name" th:value="${user.name}" required>
+          </div>
 
-    <label for="newPassword">새 비밀번호:</label>
-    <input type="password" id="newPassword" name="newPassword"><br>
+          <div>
+            <label for="email">이메일</label><br>
+            <input type="email" id="email" name="email" th:value="${user.email}" required>
+          </div>
 
-    <button type="submit">저장하기</button>
-  </form>
+          <div>
+            <label for="phone">전화번호</label><br>
+            <input type="text" id="phone" name="phone" th:value="${user.phone}">
+          </div>
 
-  <p th:if="${error}" th:text="${error}" style="color: red;"></p>
-  <p th:if="${success}" th:text="${success}" style="color: green;"></p>
+          <hr style="margin: 20px 0;">
+
+          <h3>비밀번호 변경</h3>
+
+          <div>
+            <label for="currentPassword">현재 비밀번호</label><br>
+            <input type="password" id="currentPassword" name="currentPassword">
+          </div>
+
+          <div>
+            <label for="newPassword">새 비밀번호</label><br>
+            <input type="password" id="newPassword" name="newPassword">
+          </div>
+
+          <div>
+            <label for="newPasswordConfirm">새 비밀번호 확인</label><br>
+            <input type="password" id="newPasswordConfirm" name="newPasswordConfirm">
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">저장하기</button>
+            <button type="submit"
+                    formaction="/mypage/delete"
+                    formmethod="post"
+                    onclick="return confirm('정말로 계정을 삭제하시겠습니까?')"
+                    class="btn btn-danger">계정 삭제</button>
+          </div>
+        </form>
+
+        <p th:if="${error}" th:text="${error}" class="error-message"></p>
+        <p th:if="${success}" th:text="${success}" class="success-message"></p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

@@ -10,7 +10,7 @@ body {
 }
 
 .auth-container {
-  background-color: white;
+  background-color: #ffffff;
   padding: 40px 30px;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
@@ -50,6 +50,7 @@ body {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .auth-form button:hover {
@@ -79,8 +80,21 @@ body {
   margin-bottom: 10px;
 }
 
+.success-message {
+  text-align: center;
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
 .input-msg {
   font-size: 13px;
   padding-left: 2px;
   margin-top: -10px;
+}
+
+/* 계정 삭제 버튼 전용 */
+.delete-button {
+  background-color: #dc3545 !important;
+  margin-top: 20px;
 }

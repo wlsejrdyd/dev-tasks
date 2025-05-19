@@ -34,6 +34,7 @@ public class UserController {
                              @RequestParam String phone,
                              @RequestParam(required = false) String currentPassword,
                              @RequestParam(required = false) String newPassword,
+                             @RequestParam(required = false) String newPasswordConfirm,
                              Principal principal,
                              Model model) {
 
@@ -54,6 +55,12 @@ public class UserController {
                 return "mypage";
             }
 
+            if (!newPassword.equals(newPasswordConfirm)) {
+                model.addAttribute("user", user);
+                model.addAttribute("error", "새 비밀번호가 일치하지 않습니다.");
+                return "mypage";
+            }
+
             if (newPassword.length() < 9) {
                 model.addAttribute("user", user);
                 model.addAttribute("error", "새 비밀번호는 9자 이상이어야 합니다.");
@@ -67,5 +74,13 @@ public class UserController {
         model.addAttribute("user", user);
         model.addAttribute("success", "정보가 성공적으로 수정되었습니다.");
         return "mypage";
+    }
+
+    @PostMapping("/mypage/delete")
+    public String deleteAccount(HttpSession session, Principal principal) {
+        String username = principal.getName();
+        userRepository.findByUsername(username).ifPresent(userRepository::delete);
+        session.invalidate();
+        return "redirect:/auth/login";
     }
 }
