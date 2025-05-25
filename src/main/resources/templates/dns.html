@@ -6,11 +6,13 @@
     <link rel="stylesheet" href="/css/dns.css">
     <script src="/js/dns.js" defer></script>
     <script src="/js/logout-timer.js" defer></script>
+    <script src="/js/calendar.js" defer></script>
 </head>
 <body>
 <div class="dashboard-wrapper">
     <div th:replace="fragments/sidebar :: sidebar"></div>
     <div th:replace="~{fragments/topbar :: topbar}"></div>
+    <div th:replace="~{fragments/calendar :: calendar}"></div>
 
     <div class="main-content dns-wrapper">
         <h1>🌐 DNS 도메인 관리</h1>

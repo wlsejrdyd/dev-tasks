@@ -7,11 +7,13 @@
   <link rel="stylesheet" href="/css/attendance.css">
   <script src="/js/admin.js" defer></script>
   <script src="/js/logout-timer.js" defer></script>
+  <script src="/js/calendar.js" defer></script>
 </head>
 <body>
   <div class="dashboard-wrapper">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
     <div th:replace="~{fragments/topbar :: topbar}"></div>
+    <div th:replace="~{fragments/calendar :: calendar}"></div>
 
     <div class="main-content">
       <h1>👥 사용자 목록</h1>

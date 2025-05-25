@@ -5,12 +5,14 @@
   <title>마이페이지</title>
   <link rel="stylesheet" href="/css/common.css">
   <script src="/js/logout-timer.js" defer></script>
+  <script src="/js/calendar.js" defer></script>
 </head>
 <body>
 
 <div class="dashboard-wrapper">
   <div th:replace="~{fragments/sidebar :: sidebar}"></div>
   <div th:replace="~{fragments/topbar :: topbar}"></div>
+  <div th:replace="~{fragments/calendar :: calendar}"></div>
 
   <div class="main-content" style="width: 100%; overflow-x: hidden; box-sizing: border-box;">
     <div class="dashboard-container" style="width: 100%;">
