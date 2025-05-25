@@ -3,12 +3,14 @@ package tasks.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableMethodSecurity  // ✅ @PreAuthorize 활성화
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -25,8 +27,9 @@ public class SecurityConfig {
                     "/check-email",
                     "/css/**",
                     "/js/**",
-                    "/api/**"              // ✅ API 경로 명시적 허용 또는 인증 요구
+                    "/api/**"
                 ).permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN") // ✅ 경로 기반 차단도 추가
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

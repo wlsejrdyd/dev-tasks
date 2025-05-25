@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 페이지 | TASKS</title>
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/attendance.css">
+  <script src="/js/admin.js" defer></script>
+  <script src="/js/logout-timer.js" defer></script>
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+    <div class="main-content">
+      <h1>👥 사용자 목록</h1>
+      <table class="attendance-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>이름</th>
+            <th>이메일</th>
+            <th>권한</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody id="adminUserTableBody">
+          <!-- JS에서 비동기 로딩 -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
