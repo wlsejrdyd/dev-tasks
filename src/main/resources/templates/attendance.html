@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>근태 관리</title>
     <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/attendance.css">
     <script src="/js/calendar.js" defer></script>
     <script src="/js/logout-timer.js" defer></script>
     <script src="/js/attendance.js" defer></script>
@@ -14,12 +15,10 @@
     <div th:replace="fragments/topbar :: topbar"></div>
 
     <main class="main-content">
-        <h1>근태 관리</h1>
-
         <!-- 상단: 근태 현황 -->
         <section class="card-section">
-            <h2>근태 현황</h2>
-            <table class="basic-table" id="status-table">
+            <h2>📆 근태 현황</h2>
+	    <table class="attendance-table">
                 <thead>
                     <tr>
                         <th>이름</th>
@@ -39,13 +38,13 @@
 
         <!-- 하단: 상세 내역 -->
         <section class="card-section">
-            <h2>상세 내역</h2>
-            <div style="margin-bottom: 10px;">
+            <h2>📋 상세 내역</h2>
+            <div style="margin-bottom: 16px;">
                 <button id="add-row" class="btn">행 추가</button>
                 <button id="save-records" class="btn">저장</button>
                 <button id="delete-selected" class="btn">선택 삭제</button>
             </div>
-            <table class="basic-table" id="record-table">
+	    <table class="attendance-table data-table">
                 <thead>
                     <tr>
                         <th></th>

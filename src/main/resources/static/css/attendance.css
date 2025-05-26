@@ -1,0 +1,66 @@
+.attendance-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.attendance-container h1 {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.upload-section {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.upload-section input[type="file"] {
+  flex: 1;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.attendance-table th,
+.attendance-table td {
+  border: 1px solid #ccc;
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.attendance-table th {
+  background-color: #f2f2f2;
+}
+
+.attendance-summary {
+  margin-top: 30px;
+  padding: 10px 15px;
+  background: #f9f9f9;
+  border-left: 4px solid #0073e6;
+}
+
+.attendance-summary h3 {
+  margin-top: 0;
+}
+
+.basic-table select {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  padding-right: 28px;
+}
