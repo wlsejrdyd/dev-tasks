@@ -28,11 +28,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
-        // GUEST는 로그인 차단
-        if (user.getRole() == User.Role.GUEST) {
-            throw new DisabledException("GUEST 계정은 로그인할 수 없습니다.");
-        }
-
         // leaveDate가 지정된 사용자는 로그인 차단
         AttendanceStatus status = attendanceStatusRepository.findByUser(user).orElse(null);
         if (status != null && status.getLeaveDate() != null) {
