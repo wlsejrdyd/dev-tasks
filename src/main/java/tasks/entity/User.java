@@ -2,6 +2,7 @@ package tasks.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,6 +37,9 @@ public class User {
   @Enumerated(EnumType.STRING)
   private Role role;
 
+  @Column(name = "leave_date")
+  private LocalDate leaveDate;
+
   @Column(name = "created_at")
   private LocalDateTime createdAt;
 
@@ -45,6 +49,6 @@ public class User {
   }
 
   public enum Role {
-    USER, ADMIN
+    USER, ADMIN, GUEST
   }
 }

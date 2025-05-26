@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import tasks.dto.AttendanceRecordRequest;
 import tasks.dto.AttendanceRecordResponse;
 import tasks.dto.AttendanceStatusResponse;
+import tasks.entity.User;
 import tasks.service.AttendanceService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -44,4 +45,10 @@ public class AttendanceApiController {
         response.setHeader("Content-Disposition", "attachment; filename=attendance.xlsx");
         attendanceService.exportExcel(response.getOutputStream());
     }
+
+    @GetMapping("/users")
+    public List<User> getAvailableUsers() {
+        return attendanceService.getNonGuestUsers();
+    }
 }
+

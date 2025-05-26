@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
               <select data-id="${user.id}" class="role-select">
                 <option value="USER" ${user.role === "USER" ? "selected" : ""}>USER</option>
                 <option value="ADMIN" ${user.role === "ADMIN" ? "selected" : ""}>ADMIN</option>
+                <option value="GUEST" ${user.role === "GUEST" ? "selected" : ""}>GUEST</option>
               </select>
             </td>
             <td><input type="date" class="join-date" data-id="${user.id}" /></td>

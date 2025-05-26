@@ -3,6 +3,7 @@ package tasks.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,13 +30,20 @@ public class SecurityConfig {
                     "/js/**",
                     "/api/**"
                 ).permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN") // ✅ 경로 기반 차단도 추가
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")
                 .loginProcessingUrl("/auth/login")
-                .failureUrl("/auth/login?error")
+                .failureHandler((request, response, exception) -> {
+                    Throwable cause = exception.getCause();  // 🔍 내부 예외 추적
+                    if (exception instanceof DisabledException || cause instanceof DisabledException) {
+                        response.sendRedirect("/auth/login?blocked=true");
+                    } else {
+                        response.sendRedirect("/auth/login?error=true");
+                    }
+                })
                 .defaultSuccessUrl("/dashboard", true)
                 .permitAll()
             )

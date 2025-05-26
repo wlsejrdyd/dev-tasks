@@ -69,6 +69,7 @@ public class AttendanceService {
     @Transactional(readOnly = true)
     public List<AttendanceStatusResponse> getAllStatus() {
         return statusRepository.findAll().stream()
+                .filter(s -> s.getUser().getRole() != User.Role.GUEST)
                 .map(status -> {
                     AttendanceStatusResponse res = new AttendanceStatusResponse();
                     res.setUserId(status.getUser().getId());
@@ -145,13 +146,20 @@ public class AttendanceService {
         updateStatusFromRecords(user);
     }
 
-    private BigDecimal safe(BigDecimal value) {
-        return value != null ? value : BigDecimal.ZERO;
-    }
-
     public void exportExcel(OutputStream out) throws IOException {
         List<AttendanceRecord> records = recordRepository.findAll();
         List<AttendanceStatus> statuses = statusRepository.findAll();
         ExcelExporter.exportAll(out, records, statuses);
     }
+
+    public List<User> getNonGuestUsers() {
+        return userRepository.findAll().stream()
+                .filter(u -> u.getRole() != User.Role.GUEST)
+                .toList();
+    }
+
+    private BigDecimal safe(BigDecimal value) {
+        return value != null ? value : BigDecimal.ZERO;
+    }
 }
+
