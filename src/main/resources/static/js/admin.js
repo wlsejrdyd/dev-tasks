@@ -18,31 +18,50 @@ document.addEventListener("DOMContentLoaded", function () {
                 <option value="ADMIN" ${user.role === "ADMIN" ? "selected" : ""}>ADMIN</option>
               </select>
             </td>
+            <td><input type="date" class="join-date" data-id="${user.id}" /></td>
+            <td><input type="date" class="leave-date" data-id="${user.id}" /></td>
+            <td><input type="number" class="annual-granted" data-id="${user.id}" step="0.5" min="0" /></td>
             <td>
-              <button class="btn-delete" data-id="${user.id}">삭제</button>
+              <button class="btn-update-status" data-id="${user.id}">💾</button>
+              <button class="btn-delete" data-id="${user.id}">🗑</button>
             </td>
           `;
           tableBody.appendChild(tr);
         });
 
         attachEventHandlers();
+        preloadStatusData();
+      });
+  }
+
+  function preloadStatusData() {
+    fetch("/api/attendance/status")
+      .then((res) => res.json())
+      .then((statuses) => {
+        statuses.forEach((status) => {
+          const id = status.userId;
+          const joinInput = document.querySelector(`.join-date[data-id="${id}"]`);
+          const leaveInput = document.querySelector(`.leave-date[data-id="${id}"]`);
+          const grantedInput = document.querySelector(`.annual-granted[data-id="${id}"]`);
+
+          if (joinInput && status.joinDate) joinInput.value = status.joinDate;
+          if (leaveInput && status.leaveDate) leaveInput.value = status.leaveDate;
+          if (grantedInput && status.annualGranted != null) grantedInput.value = status.annualGranted;
+        });
       });
   }
 
   function attachEventHandlers() {
-    // 권한 변경
     document.querySelectorAll(".role-select").forEach((select) => {
       select.addEventListener("change", function () {
         const userId = this.dataset.id;
         const role = this.value;
-
         fetch(`/api/admin/users/${userId}/role?role=${role}`, {
           method: "PUT",
         }).then(() => alert("권한이 변경되었습니다."));
       });
     });
 
-    // 사용자 삭제
     document.querySelectorAll(".btn-delete").forEach((btn) => {
       btn.addEventListener("click", function () {
         const userId = this.dataset.id;
@@ -50,15 +69,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
         fetch(`/api/admin/users/${userId}`, {
           method: "DELETE",
-        })
-          .then((res) => {
-            if (res.ok) {
-              alert("삭제 완료");
-              fetchUsers();
-            } else {
-              alert("삭제 실패");
-            }
-          });
+        }).then((res) => {
+          if (res.ok) {
+            alert("삭제 완료");
+            fetchUsers();
+          } else {
+            alert("삭제 실패");
+          }
+        });
+      });
+    });
+
+    document.querySelectorAll(".btn-update-status").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const userId = this.dataset.id;
+        const joinDate = document.querySelector(`.join-date[data-id="${userId}"]`)?.value;
+        const leaveDate = document.querySelector(`.leave-date[data-id="${userId}"]`)?.value;
+        const annualGranted = document.querySelector(`.annual-granted[data-id="${userId}"]`)?.value;
+
+        fetch("/api/admin/attendance-status", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId,
+            joinDate,
+            leaveDate,
+            annualGranted,
+          }),
+        }).then((res) => {
+          if (res.ok) {
+            alert("근태 상태가 저장되었습니다.");
+          } else {
+            alert("저장 실패");
+          }
+        });
       });
     });
   }
