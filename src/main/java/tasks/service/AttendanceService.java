@@ -71,12 +71,19 @@ public class AttendanceService {
                     res.setUserName(status.getUser().getName());
                     res.setJoinDate(status.getJoinDate().toString());
                     res.setLeaveDate(status.getLeaveDate() != null ? status.getLeaveDate().toString() : null);
-                    res.setAnnualGranted(status.getAnnualGranted().doubleValue());
-                    res.setAnnualUsed(status.getAnnualUsed().doubleValue());
-                    res.setAnnualRemain(status.getAnnualGranted().subtract(status.getAnnualUsed()).doubleValue());
-                    res.setCompensatoryGranted(status.getCompensatoryGranted().doubleValue());
-                    res.setCompensatoryUsed(status.getCompensatoryUsed().doubleValue());
-                    res.setCompensatoryRemain(status.getCompensatoryGranted().subtract(status.getCompensatoryUsed()).doubleValue());
+
+                    BigDecimal annualGranted = safe(status.getAnnualGranted());
+                    BigDecimal annualUsed = safe(status.getAnnualUsed());
+                    BigDecimal compGranted = safe(status.getCompensatoryGranted());
+                    BigDecimal compUsed = safe(status.getCompensatoryUsed());
+
+                    res.setAnnualGranted(annualGranted.doubleValue());
+                    res.setAnnualUsed(annualUsed.doubleValue());
+                    res.setAnnualRemain(annualGranted.subtract(annualUsed).doubleValue());
+                    res.setCompensatoryGranted(compGranted.doubleValue());
+                    res.setCompensatoryUsed(compUsed.doubleValue());
+                    res.setCompensatoryRemain(compGranted.subtract(compUsed).doubleValue());
+
                     return res;
                 }).collect(Collectors.toList());
     }
@@ -85,26 +92,34 @@ public class AttendanceService {
     public void updateStatusFromRecords(User user) {
         List<AttendanceRecord> records = recordRepository.findByUser(user);
 
-        BigDecimal annualUsed = records.stream()
-                .filter(r -> r.getType() == AttendanceType.연차)
-                .map(AttendanceRecord::getDays)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal annualUsed = BigDecimal.ZERO;
+        BigDecimal compUsed = BigDecimal.ZERO;
+        BigDecimal compGranted = BigDecimal.ZERO;
 
-        BigDecimal compUsed = records.stream()
-                .filter(r -> r.getType() == AttendanceType.대휴)
-                .map(AttendanceRecord::getDays)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        for (AttendanceRecord record : records) {
+            BigDecimal days = safe(record.getDays());
+            switch (record.getType()) {
+                case 연차사용 -> annualUsed = annualUsed.add(days);
+                case 대휴사용 -> compUsed = compUsed.add(days);
+                case 대휴부여 -> compGranted = compGranted.add(days);
+                case 기타 -> {} // 무시
+            }
+        }
 
         AttendanceStatus status = statusRepository.findByUser(user)
-                .orElse(AttendanceStatus.builder()
+                .orElseGet(() -> AttendanceStatus.builder()
                         .user(user)
                         .joinDate(LocalDate.now())
                         .annualGranted(BigDecimal.ZERO)
                         .compensatoryGranted(BigDecimal.ZERO)
                         .build());
 
+        if (status.getAnnualGranted() == null) status.setAnnualGranted(BigDecimal.ZERO);
+        if (status.getCompensatoryGranted() == null) status.setCompensatoryGranted(BigDecimal.ZERO);
+
         status.setAnnualUsed(annualUsed);
         status.setCompensatoryUsed(compUsed);
+        status.setCompensatoryGranted(compGranted);
 
         statusRepository.save(status);
     }
@@ -113,9 +128,13 @@ public class AttendanceService {
     public void deleteRecord(Long id) {
         AttendanceRecord record = recordRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 기록"));
-    
-        User user = record.getUser(); // 삭제 대상의 사용자 참조
+
+        User user = record.getUser();
         recordRepository.deleteById(id);
-        updateStatusFromRecords(user); // 삭제 후 요약 갱신
+        updateStatusFromRecords(user);
+    }
+
+    private BigDecimal safe(BigDecimal value) {
+        return value != null ? value : BigDecimal.ZERO;
     }
 }

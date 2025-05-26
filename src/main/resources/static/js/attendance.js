@@ -69,8 +69,10 @@ document.addEventListener("DOMContentLoaded", function () {
                             </td>
                             <td>
                                 <select class="type-select">
-                                    <option value="연차" ${row.type === "연차" ? "selected" : ""}>연차</option>
-                                    <option value="대휴" ${row.type === "대휴" ? "selected" : ""}>대휴</option>
+                                    <option value="연차사용" ${row.type === "연차사용" ? "selected" : ""}>연차사용</option>
+                                    <option value="대휴사용" ${row.type === "대휴사용" ? "selected" : ""}>대휴사용</option>
+                                    <option value="대휴부여" ${row.type === "대휴부여" ? "selected" : ""}>대휴부여</option>
+                                    <option value="기타" ${row.type === "기타" ? "selected" : ""}>기타</option>
                                 </select>
                             </td>
                             <td contenteditable="true" class="editable-cell">${row.startDate}</td>
@@ -96,8 +98,10 @@ document.addEventListener("DOMContentLoaded", function () {
             <td>
                 <select class="type-select">
                     <option value="">-- 선택 --</option>
-                    <option value="연차">연차</option>
-                    <option value="대휴">대휴</option>
+		    <option value="연차사용">연차 사용</option>
+		    <option value="대휴사용">대휴 사용</option>
+		    <option value="대휴부여">대휴 부여</option>
+		    <option value="기타">기타</option>
                 </select>
             </td>
             <td contenteditable="true" class="editable-cell"></td>
