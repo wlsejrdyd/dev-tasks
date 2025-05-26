@@ -108,80 +108,84 @@ document.addEventListener("DOMContentLoaded", function () {
         recordBody.appendChild(tr);
     }
 
-    function saveRecords() {
-        const rows = recordBody.querySelectorAll("tr");
-        const payload = [];
+    async function saveRecords() {
+      const rows = recordBody.querySelectorAll("tr");
+      const payload = [];
     
-        rows.forEach(tr => {
-            const id = tr.querySelector(".row-check")?.dataset?.id; // ✅ 이미 저장된 row인지 확인
-            const userId = tr.querySelector(".user-select")?.value;
-            const type = tr.querySelector(".type-select")?.value;
-            const tds = tr.querySelectorAll(".editable-cell");
+      rows.forEach(tr => {
+        const id = tr.querySelector(".row-check")?.dataset?.id;
+        const userId = tr.querySelector(".user-select")?.value;
+        const type = tr.querySelector(".type-select")?.value;
+        const tds = tr.querySelectorAll(".editable-cell");
     
-            const record = {
-                userId: parseInt(userId),
-                type: type,
-                startDate: normalizeDate(tds[0]?.innerText.trim()),
-                endDate: normalizeDate(tds[1]?.innerText.trim()),
-                days: parseFloat(tds[2]?.innerText.trim()),
-                reason: tds[3]?.innerText.trim()
-            };
+        const record = {
+          userId: parseInt(userId),
+          type: type,
+          startDate: normalizeDate(tds[0]?.innerText.trim()),
+          endDate: normalizeDate(tds[1]?.innerText.trim()),
+          days: parseFloat(tds[2]?.innerText.trim()),
+          reason: tds[3]?.innerText.trim()
+        };
     
-            // ⛔ 저장된 기존 row는 제외하고, 신규만 저장
-            if (
-                !id &&
-                record.userId &&
-                record.startDate &&
-                record.endDate &&
-                !isNaN(record.days) &&
-                record.days > 0 &&
-                record.type
-            ) {
-                payload.push(record);
-            }
-        });
-    
-        if (payload.length === 0) {
-            alert("저장할 유효한 데이터가 없습니다.");
-            return;
+        if (
+          !id &&
+          record.userId &&
+          record.startDate &&
+          record.endDate &&
+          !isNaN(record.days) &&
+          record.days > 0 &&
+          record.type
+        ) {
+          payload.push(record);
         }
+      });
     
-        Promise.all(payload.map(p =>
-            fetch("/api/attendance/record", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(p)
-            })
-        )).then(() => {
-            alert("저장 완료!");
-            loadStatus();
-            loadAllRecords();
+      if (payload.length === 0) {
+        alert("저장할 유효한 데이터가 없습니다.");
+        return;
+      }
+    
+      // ✅ 저장을 직렬화해서 처리
+      for (const p of payload) {
+        await fetch("/api/attendance/record", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(p)
         });
+      }
+    
+      alert("저장 완료!");
+    
+      // ✅ 저장 확실히 끝난 후 불러오기
+      await loadStatus();
+      await loadAllRecords();
     }
 
-    function deleteSelected() {
-        const checked = document.querySelectorAll(".row-check:checked");
-        if (checked.length === 0) {
-            alert("삭제할 항목을 선택하세요.");
-            return;
+    async function deleteSelected() {
+      const checked = document.querySelectorAll(".row-check:checked");
+      if (checked.length === 0) {
+        alert("삭제할 항목을 선택하세요.");
+        return;
+      }
+    
+      if (!confirm("정말 삭제하시겠습니까?")) return;
+    
+      for (const chk of checked) {
+        const id = chk.dataset.id;
+        if (id) {
+          await fetch(`/api/attendance/record/${id}`, { method: "DELETE" });
         }
-
-        if (!confirm("정말 삭제하시겠습니까?")) return;
-
-        Promise.all(Array.from(checked).map(chk => {
-            const id = chk.dataset.id;
-            if (id) {
-                return fetch(`/api/attendance/record/${id}`, { method: "DELETE" });
-            }
-        })).then(() => {
-            alert("삭제 완료!");
-            loadStatus();
-            loadAllRecords();
-        });
+      }
+    
+      alert("삭제 완료!");
+    
+      // ✅ 삭제 다 끝난 후 상태와 테이블 동기화
+      await loadStatus();
+      await loadAllRecords();
     }
 
     addRowBtn.addEventListener("click", addRow);
-    saveBtn.addEventListener("click", saveRecords);
+    saveBtn.addEventListener("click", () => setTimeout(saveRecords, 100));
     deleteBtn.addEventListener("click", deleteSelected);
 
     loadUsers();
