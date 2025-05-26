@@ -55,7 +55,7 @@ public class AttendanceService {
                 .map(r -> {
                     AttendanceRecordResponse res = new AttendanceRecordResponse();
                     res.setId(r.getId());
-                    res.setUserId(user.getId()); // ✅ 추가
+                    res.setUserId(user.getId());
                     res.setUserName(user.getName());
                     res.setType(r.getType());
                     res.setStartDate(r.getStartDate().toString());
@@ -78,15 +78,23 @@ public class AttendanceService {
 
                     BigDecimal annualGranted = safe(status.getAnnualGranted());
                     BigDecimal annualUsed = safe(status.getAnnualUsed());
+                    BigDecimal annualRemain = annualGranted.subtract(annualUsed);
+
                     BigDecimal compGranted = safe(status.getCompensatoryGranted());
                     BigDecimal compUsed = safe(status.getCompensatoryUsed());
+                    BigDecimal compRemain = compGranted.subtract(compUsed);
 
                     res.setAnnualGranted(annualGranted.doubleValue());
                     res.setAnnualUsed(annualUsed.doubleValue());
-                    res.setAnnualRemain(annualGranted.subtract(annualUsed).doubleValue());
+                    res.setAnnualRemain(annualRemain.doubleValue());
+
                     res.setCompensatoryGranted(compGranted.doubleValue());
                     res.setCompensatoryUsed(compUsed.doubleValue());
-                    res.setCompensatoryRemain(compGranted.subtract(compUsed).doubleValue());
+                    res.setCompensatoryRemain(compRemain.doubleValue());
+
+                    res.setTotalGranted(annualGranted.add(compGranted).doubleValue());
+                    res.setTotalUsed(annualUsed.add(compUsed).doubleValue());
+                    res.setTotalRemain(annualRemain.add(compRemain).doubleValue());
 
                     return res;
                 }).collect(Collectors.toList());
@@ -106,7 +114,7 @@ public class AttendanceService {
                 case 연차사용 -> annualUsed = annualUsed.add(days);
                 case 대휴사용 -> compUsed = compUsed.add(days);
                 case 대휴부여 -> compGranted = compGranted.add(days);
-                case 기타 -> {} // 무시
+                case 기타 -> {}
             }
         }
 

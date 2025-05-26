@@ -5,12 +5,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const saveBtn = document.getElementById("save-records");
     const deleteBtn = document.getElementById("delete-selected");
     const downloadBtn = document.getElementById("download-excel");
+    const monthSelector = document.getElementById("month-selector");
 
     let users = [];
+    let allRecords = [];
 
     function normalizeDate(input) {
         if (!input) return "";
-        if (input.includes(".")) {
+        if (typeof input === "string" && input.includes(".")) {
             const parts = input.split(".");
             if (parts.length === 3) {
                 return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
@@ -19,72 +21,67 @@ document.addEventListener("DOMContentLoaded", function () {
         return input;
     }
 
-    function loadUsers() {
-        fetch("/api/users")
-            .then(res => res.json())
-            .then(data => {
-                users = data;
-                loadAllRecords();
-            });
+    function getMonth(dateStr) {
+        return dateStr?.substring(0, 7); // '2025-05'
     }
 
-    function loadStatus() {
-        fetch("/api/attendance/status")
-            .then((res) => res.json())
-            .then((data) => {
-                statusBody.innerHTML = "";
-                data.forEach((row) => {
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td>${row.userName}</td>
-                        <td>${row.joinDate}</td>
-                        <td>${row.leaveDate || "-"}</td>
-                        <td>${row.annualGranted}</td>
-                        <td>${row.annualUsed}</td>
-                        <td>${row.annualRemain}</td>
-                        <td>${row.compensatoryGranted}</td>
-                        <td>${row.compensatoryUsed}</td>
-                        <td>${row.compensatoryRemain}</td>
-                    `;
-                    statusBody.appendChild(tr);
-                });
-            });
+    function buildMonthSelector() {
+        const months = [...new Set(allRecords.map(r => getMonth(r.startDate)).filter(Boolean))];
+        months.sort().reverse();
+        monthSelector.innerHTML = `<option value="">전체</option>` +
+            months.map(m => `<option value="${m}">${m}</option>`).join('');
     }
 
-    function loadAllRecords() {
+    function filterRecordsByMonth(month) {
+        const filtered = month
+            ? allRecords.filter(r => getMonth(r.startDate) === month)
+            : allRecords;
+        renderRecordRows(filtered);
+    }
+
+    function renderRecordRows(data) {
         recordBody.innerHTML = "";
-        users.forEach(user => {
-            fetch(`/api/attendance/records/${user.id}`)
-                .then(res => res.json())
-                .then(data => {
-                    data.forEach(row => {
-                        const tr = document.createElement("tr");
-                        tr.innerHTML = `
-                            <td><input type="checkbox" class="row-check" data-id="${row.id}"></td>
-                            <td>
-                                <select class="user-select">
-                                    ${users.map(u =>
-                                        `<option value="${u.id}" ${u.id === row.userId ? "selected" : ""}>${u.name}</option>`
-                                    ).join('')}
-                                </select>
-                            </td>
-                            <td>
-                                <select class="type-select">
-                                    <option value="연차사용" ${row.type === "연차사용" ? "selected" : ""}>연차사용</option>
-                                    <option value="대휴사용" ${row.type === "대휴사용" ? "selected" : ""}>대휴사용</option>
-                                    <option value="대휴부여" ${row.type === "대휴부여" ? "selected" : ""}>대휴부여</option>
-                                    <option value="기타" ${row.type === "기타" ? "selected" : ""}>기타</option>
-                                </select>
-                            </td>
-                            <td contenteditable="true" class="editable-cell">${row.startDate}</td>
-                            <td contenteditable="true" class="editable-cell">${row.endDate}</td>
-                            <td contenteditable="true" class="editable-cell">${row.days}</td>
-                            <td contenteditable="true" class="editable-cell">${row.reason || ""}</td>
-                        `;
-                        recordBody.appendChild(tr);
-                    });
-                });
+        data.forEach(row => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><input type="checkbox" class="row-check" data-id="${row.id}"></td>
+                <td>
+                    <select class="user-select">
+                        ${users.map(u =>
+                            `<option value="${u.id}" ${u.id === row.userId ? "selected" : ""}>${u.name}</option>`
+                        ).join('')}
+                    </select>
+                </td>
+                <td>
+                    <select class="type-select">
+                        <option value="연차사용" ${row.type === "연차사용" ? "selected" : ""}>연차사용</option>
+                        <option value="대휴사용" ${row.type === "대휴사용" ? "selected" : ""}>대휴사용</option>
+                        <option value="대휴부여" ${row.type === "대휴부여" ? "selected" : ""}>대휴부여</option>
+                        <option value="기타" ${row.type === "기타" ? "selected" : ""}>기타</option>
+                    </select>
+                </td>
+                <td><input type="date" class="start-date" value="${row.startDate}"></td>
+                <td><input type="date" class="end-date" value="${row.endDate}"></td>
+                <td contenteditable="true" class="editable-cell">${row.days}</td>
+                <td contenteditable="true" class="editable-cell">${row.reason || ""}</td>
+            `;
+            recordBody.appendChild(tr);
         });
+    }
+
+    async function loadAllRecords() {
+        let combined = [];
+        for (const user of users) {
+            const res = await fetch(`/api/attendance/records/${user.id}`);
+            const data = await res.json();
+            data.forEach(row => {
+                row.userId = user.id;
+            });
+            combined = combined.concat(data);
+        }
+        allRecords = combined;
+        buildMonthSelector();
+        filterRecordsByMonth(monthSelector.value);
     }
 
     function addRow() {
@@ -105,8 +102,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     <option value="기타">기타</option>
                 </select>
             </td>
-            <td contenteditable="true" class="editable-cell"></td>
-            <td contenteditable="true" class="editable-cell"></td>
+            <td><input type="date" class="start-date"></td>
+            <td><input type="date" class="end-date"></td>
             <td contenteditable="true" class="editable-cell"></td>
             <td contenteditable="true" class="editable-cell"></td>
         `;
@@ -119,22 +116,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         rows.forEach(tr => {
             const id = tr.querySelector(".row-check")?.dataset?.id;
-        
-            const userIdRaw = tr.querySelector(".user-select")?.value || "0";
-            const userId = parseInt(userIdRaw, 10);
-        
+            const userId = parseInt(tr.querySelector(".user-select")?.value || "0");
             const type = tr.querySelector(".type-select")?.value;
+            const startDate = tr.querySelector(".start-date")?.value;
+            const endDate = tr.querySelector(".end-date")?.value;
             const tds = tr.querySelectorAll(".editable-cell");
-        
+
             const record = {
-                userId: userId,
-                type: type,
-                startDate: normalizeDate(tds[0]?.innerText.trim()),
-                endDate: normalizeDate(tds[1]?.innerText.trim()),
-                days: parseFloat(tds[2]?.innerText.trim()),
-                reason: tds[3]?.innerText.trim(),
+                userId,
+                type,
+                startDate,
+                endDate,
+                days: parseFloat(tds[0]?.innerText.trim()),
+                reason: tds[1]?.innerText.trim(),
             };
-        
+
             if (
                 !id &&
                 userId > 0 &&
@@ -191,11 +187,46 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = "/api/attendance/export";
     }
 
+    function loadStatus() {
+        fetch("/api/attendance/status")
+            .then(res => res.json())
+            .then(data => {
+                statusBody.innerHTML = "";
+                data.forEach(row => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${row.userName}</td>
+                        <td>${row.joinDate}</td>
+                        <td>${row.leaveDate || "-"}</td>
+                        <td>${row.annualGranted}</td>
+                        <td>${row.annualUsed}</td>
+                        <td>${row.annualRemain}</td>
+                        <td>${row.compensatoryGranted}</td>
+                        <td>${row.compensatoryUsed}</td>
+                        <td>${row.compensatoryRemain}</td>
+                        <td>${row.annualGranted + row.compensatoryGranted}</td>
+                        <td>${row.annualUsed + row.compensatoryUsed}</td>
+                        <td>${row.annualRemain + row.compensatoryRemain}</td>
+                    `;
+                    statusBody.appendChild(tr);
+                });
+            });
+    }
+
+    monthSelector.addEventListener("change", () => {
+        filterRecordsByMonth(monthSelector.value);
+    });
+
     addRowBtn.addEventListener("click", addRow);
     saveBtn.addEventListener("click", () => setTimeout(saveRecords, 100));
     deleteBtn.addEventListener("click", deleteSelected);
     downloadBtn.addEventListener("click", downloadExcel);
 
-    loadUsers();
-    loadStatus();
+    fetch("/api/users")
+        .then(res => res.json())
+        .then(data => {
+            users = data;
+            loadAllRecords();
+            loadStatus();
+        });
 });

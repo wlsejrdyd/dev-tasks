@@ -14,4 +14,8 @@ public class AttendanceStatusResponse {
     private Double compensatoryGranted;
     private Double compensatoryUsed;
     private Double compensatoryRemain;
+
+    private Double totalGranted;
+    private Double totalUsed;
+    private Double totalRemain;
 }
