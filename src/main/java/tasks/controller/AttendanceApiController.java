@@ -7,6 +7,8 @@ import tasks.dto.AttendanceRecordResponse;
 import tasks.dto.AttendanceStatusResponse;
 import tasks.service.AttendanceService;
 
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -34,5 +36,12 @@ public class AttendanceApiController {
     @DeleteMapping("/record/{id}")
     public void deleteRecord(@PathVariable Long id) {
         attendanceService.deleteRecord(id);
+    }
+
+    @GetMapping("/export")
+    public void downloadExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=attendance.xlsx");
+        attendanceService.exportExcel(response.getOutputStream());
     }
 }

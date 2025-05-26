@@ -13,7 +13,10 @@ import tasks.entity.enums.AttendanceType;
 import tasks.repository.AttendanceRecordRepository;
 import tasks.repository.AttendanceStatusRepository;
 import tasks.repository.UserRepository;
+import tasks.util.ExcelExporter;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -52,6 +55,7 @@ public class AttendanceService {
                 .map(r -> {
                     AttendanceRecordResponse res = new AttendanceRecordResponse();
                     res.setId(r.getId());
+                    res.setUserId(user.getId()); // ✅ 추가
                     res.setUserName(user.getName());
                     res.setType(r.getType());
                     res.setStartDate(r.getStartDate().toString());
@@ -127,8 +131,7 @@ public class AttendanceService {
     @Transactional
     public void deleteRecord(Long id) {
         AttendanceRecord record = recordRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 기록"));
-
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 기록"));
         User user = record.getUser();
         recordRepository.deleteById(id);
         updateStatusFromRecords(user);
@@ -136,5 +139,11 @@ public class AttendanceService {
 
     private BigDecimal safe(BigDecimal value) {
         return value != null ? value : BigDecimal.ZERO;
+    }
+
+    public void exportExcel(OutputStream out) throws IOException {
+        List<AttendanceRecord> records = recordRepository.findAll();
+        List<AttendanceStatus> statuses = statusRepository.findAll();
+        ExcelExporter.exportAll(out, records, statuses);
     }
 }

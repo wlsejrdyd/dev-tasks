@@ -6,6 +6,7 @@ import tasks.entity.enums.AttendanceType;
 @Data
 public class AttendanceRecordResponse {
     private Long id;
+    private Long userId; // ✅ 추가됨
     private String userName;
     private AttendanceType type;
     private String startDate;
