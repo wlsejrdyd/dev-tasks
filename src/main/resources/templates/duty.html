@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>당직표 관리</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/duty.css">
+    <script src="/js/duty.js" defer></script>
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+    <main class="main-content">
+        <section>
+            <h2>📅 당직표 입력</h2>
+            <label>
+                연도:
+                <select id="year-select"></select>
+            </label>
+            <label style="margin-left: 10px;">
+                월:
+                <select id="month-select"></select>
+            </label>
+            <button id="save-btn">저장</button>
+        </section>
+
+        <section>
+            <div style="overflow-x:auto; margin-top: 16px;">
+                <table id="duty-table" class="preview-table" contenteditable="true">
+                    <tbody>
+                    <!-- 엑셀 복붙 예상 구조: 30행 x 8열 -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <h2>📊 통계</h2>
+            <table id="stat-table" class="preview-table">
+                <thead>
+                    <tr>
+                        <th>이름</th>
+                        <th>주간</th>
+                        <th>야간</th>
+                        <th>합계</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+    </main>
+</div>
+</body>
+</html>
