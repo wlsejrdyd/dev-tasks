@@ -13,4 +13,6 @@
      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/services')} ? 'active'">내부 서비스</a>
   <a href="/attendance"
      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/attendance')} ? 'active'">근태 관리</a>
+  <a href="/duty"
+     th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/attendance')} ? 'active'">당직근무 관리</a>
 </div>

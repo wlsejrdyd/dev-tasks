@@ -7,15 +7,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function createEditableGrid() {
         dutyTable.innerHTML = "";
-        for (let i = 0; i < 30; i++) {
-            const tr = document.createElement("tr");
-            for (let j = 0; j < 8; j++) {
-                const td = document.createElement("td");
-                td.contentEditable = true;
-                td.style.minWidth = "80px";
-                tr.appendChild(td);
+        for (let w = 0; w < 5; w++) {
+            for (let r = 0; r < 5; r++) {
+                const tr = document.createElement("tr");
+                for (let c = 0; c < 8; c++) {
+                    const td = document.createElement("td");
+                    td.contentEditable = true;
+                    td.style.minWidth = "80px";
+                    tr.appendChild(td);
+                }
+                dutyTable.appendChild(tr);
             }
-            dutyTable.appendChild(tr);
         }
     }
 
@@ -27,45 +29,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
         createEditableGrid();
 
+	for (let i = 0; i < dutyTable.rows.length; i++) {
+            const mod = i % 5;
+            const week = Math.floor(i / 5);
+            if (mod === 0) {
+                const days = ["일", "월", "화", "수", "목", "금", "토"];
+                for (let j = 1; j <= 7; j++) {
+                    dutyTable.rows[i].cells[j].innerText = days[j - 1];
+                }
+            } else if (mod === 1) {
+                const startDay = week * 7;
+                for (let j = 1; j <= 7; j++) {
+                    const d = new Date(year, month - 1, startDay + j);
+                    if (d.getMonth() + 1 === month) {
+                        dutyTable.rows[i].cells[j].innerText = `${month}월 ${d.getDate()}일`;
+                    } else {
+                        dutyTable.rows[i].cells[j].innerText = "-";
+                    }
+                }
+            } else if (mod === 2) {
+                dutyTable.rows[i].cells[0].innerText = "주간 근무(09~19)";
+            } else if (mod === 3) {
+                dutyTable.rows[i].cells[0].innerText = "야간 근무(19~09)";
+            } else if (mod === 4) {
+                dutyTable.rows[i].cells[0].innerText = "야간 근무(22~08)";
+            }
+        }
+
         for (const cell of data) {
             const { weekIndex, weekdayIndex, time, name } = cell;
-            const rowIndex = weekIndex * 3 + getTimeIndex(time);
+            const rowIndex = weekIndex * 5 + getTimeIndex(time);
             const td = dutyTable.rows[rowIndex]?.cells[weekdayIndex + 1];
             if (td) {
                 td.innerText = td.innerText ? td.innerText + ", " + name : name;
             }
         }
-
-        // 시간 라벨 및 날짜 출력
-        const startDate = new Date(year, month - 1, 1);
-        for (let week = 0; week < 5; week++) {
-            const baseRow = week * 3;
-            const headerRow = dutyTable.rows[baseRow];
-            if (!headerRow) continue;
-
-            headerRow.cells[0].innerText = "";
-            for (let day = 0; day < 7; day++) {
-                const date = new Date(startDate);
-                date.setDate(1 + week * 7 + day - (startDate.getDay() % 7));
-                if (date.getMonth() + 1 === month) {
-                    headerRow.cells[day + 1].innerText = `${month}월 ${date.getDate()}일`;
-                } else {
-                    headerRow.cells[day + 1].innerText = "";
-                }
-            }
-
-            if (dutyTable.rows[baseRow + 1]) {
-                dutyTable.rows[baseRow + 1].cells[0].innerText = "주간 근무(09~19)";
-            }
-            if (dutyTable.rows[baseRow + 2]) {
-                dutyTable.rows[baseRow + 2].cells[0].innerText = "야간 근무(19~09)";
-            }
-        }
     }
 
     function getTimeIndex(time) {
-        if (time.includes("주간")) return 1;
-        if (time.includes("야간")) return 2;
+	if (time === "주간 근무(09~19)") return 2;
+        if (time === "야간 근무(19~09)") return 3;
+        if (time === "야간 근무(22~08)") return 4;
         return 0;
     }
 
@@ -97,13 +101,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         for (let r = 0; r < dutyTable.rows.length; r++) {
             const tds = dutyTable.rows[r].cells;
-            const mod = r % 3;
-            if (mod === 1 || mod === 2) {
-                const time = tds[0]?.innerText?.trim() || "";
-                const data = [];
-                for (let c = 1; c < tds.length; c++) {
-                    data.push(tds[c].innerText.trim());
-                }
+            const time = tds[0]?.innerText?.trim() || "-";
+            const data = [];
+            for (let c = 1; c < tds.length; c++) {
+                const value = tds[c].innerText.trim();
+                data.push(value === "" ? "-" : value);
+            }
+
+            // 💡 무조건 rows 에 넣는다
+            if (time.includes("근무")) {
                 rows.push({ time, data });
             }
         }
@@ -148,8 +154,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const clipboardData = e.clipboardData || window.clipboardData;
         const text = clipboardData.getData("text/plain");
 
-        const rows = text.trim().split("\n").map(row => row.split("\t"));
+        const rows = text.split("\n").map(row => row.split("\t"));
         const table = e.currentTarget;
+
         const selection = window.getSelection();
         const anchorCell = selection.anchorNode?.closest("td");
         if (!anchorCell) return;
