@@ -6,7 +6,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/tasks
+    url: jdbc:mysql://localhost:9981/tasks
     username: task_admin
     password: qwe123QWE!@#
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -27,10 +27,10 @@ spring:
     encoding: UTF-8
 
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: jdy@mz.co.kr
-    password: rlxd ccrg hwai kata
+    host: gov-smtp.mailplug.com
+    port: 465
+    username: m2974@snuh.org
+    password: Ghlfyddur5dnjf!
     properties:
       mail:
         smtp:

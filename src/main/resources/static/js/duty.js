@@ -29,20 +29,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
         createEditableGrid();
 
-	for (let i = 0; i < dutyTable.rows.length; i++) {
+        const days = ["일", "월", "화", "수", "목", "금", "토"];
+        const firstDay = new Date(year, month - 1, 1).getDay(); // 1일 요일 (0=일)
+        let currentDay = 1;
+        const daysInMonth = new Date(year, month, 0).getDate();
+
+        for (let i = 0; i < dutyTable.rows.length; i++) {
             const mod = i % 5;
             const week = Math.floor(i / 5);
+
             if (mod === 0) {
-                const days = ["일", "월", "화", "수", "목", "금", "토"];
+                // 요일 고정
                 for (let j = 1; j <= 7; j++) {
                     dutyTable.rows[i].cells[j].innerText = days[j - 1];
                 }
             } else if (mod === 1) {
-                const startDay = week * 7;
+                // 날짜 자동 채움
                 for (let j = 1; j <= 7; j++) {
-                    const d = new Date(year, month - 1, startDay + j);
-                    if (d.getMonth() + 1 === month) {
-                        dutyTable.rows[i].cells[j].innerText = `${month}월 ${d.getDate()}일`;
+                    const dayIndex = week * 7 + (j - 1);
+                    if (dayIndex >= firstDay && currentDay <= daysInMonth) {
+                        dutyTable.rows[i].cells[j].innerText = `${month}월 ${currentDay++}일`;
                     } else {
                         dutyTable.rows[i].cells[j].innerText = "-";
                     }
@@ -67,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function getTimeIndex(time) {
-	if (time === "주간 근무(09~19)") return 2;
+        if (time === "주간 근무(09~19)") return 2;
         if (time === "야간 근무(19~09)") return 3;
         if (time === "야간 근무(22~08)") return 4;
         return 0;
@@ -108,7 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 data.push(value === "" ? "-" : value);
             }
 
-            // 💡 무조건 rows 에 넣는다
             if (time.includes("근무")) {
                 rows.push({ time, data });
             }
