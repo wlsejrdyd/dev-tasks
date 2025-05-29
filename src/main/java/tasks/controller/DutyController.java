@@ -1,6 +1,7 @@
 package tasks.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tasks.dto.DutySaveRequest;
@@ -21,6 +22,7 @@ public class DutyController {
         return "duty";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/api/duty/save")
     @ResponseBody
     public String save(@RequestBody DutySaveRequest request) {

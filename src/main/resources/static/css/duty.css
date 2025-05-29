@@ -35,7 +35,6 @@ button {
   cursor: pointer;
   margin-left: 10px;
 }
-
 button:hover {
   background-color: #3367d6;
 }
@@ -44,26 +43,80 @@ button:hover {
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
+  table-layout: fixed;
 }
 
-#duty-table td, #stat-table td,
-#duty-table th, #stat-table th {
-  border: 1px solid #ccc;
-  padding: 8px;
+#duty-table td, #duty-table th,
+#stat-table td, #stat-table th {
+  border: 1px solid #ddd;
+  padding: 10px 8px;
   text-align: center;
+  font-size: 14px;
+  word-wrap: break-word;
 }
 
 #duty-table td {
   min-width: 80px;
   height: 32px;
 }
-
 #duty-table td:focus {
   outline: 2px solid #4285f4;
   background-color: #f0f8ff;
 }
 
-#stat-table td:nth-child(4) {
+/* 요일 색상 강조 */
+.sunday {
+  color: red;
   font-weight: bold;
-  color: #222;
+}
+.saturday {
+  color: blue;
+  font-weight: bold;
+}
+.weekday {
+  color: black;
+}
+.holiday {
+  color: red !important;
+  font-weight: bold;
+  background-color: #fff0f0;
+}
+
+/* 📊 통계 테이블 스타일 향상 */
+#stat-table {
+  background: #f9fbff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px #e0e6ed;
+}
+
+#stat-table thead {
+  background-color: #eef3fc;
+}
+
+#stat-table th {
+  font-weight: 600;
+  font-size: 14px;
+  color: #2a2a2a;
+  background-color: #eef3fc;
+  border-bottom: 2px solid #d1dbe8;
+}
+
+#stat-table td {
+  background-color: #ffffff;
+  font-size: 13px;
+  color: #333;
+}
+
+#stat-table tr:nth-child(even) td {
+  background-color: #f4f7fb;
+}
+
+#stat-table tr:hover td {
+  background-color: #eaf1fb;
+}
+
+#stat-table td:last-child {
+  font-weight: bold;
+  color: #0a58ca;
 }

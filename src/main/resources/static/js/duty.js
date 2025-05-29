@@ -5,6 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const yearSelect = document.getElementById("year-select");
     const monthSelect = document.getElementById("month-select");
 
+    // 간단 공휴일 목록 (예시)
+    const holidays = [
+        "2025-01-01", "2025-03-01", "2025-05-05", "2025-06-06",
+        "2025-08-15", "2025-10-03", "2025-10-09", "2025-12-25"
+    ];
+
     function createEditableGrid() {
         dutyTable.innerHTML = "";
         for (let w = 0; w < 5; w++) {
@@ -30,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
         createEditableGrid();
 
         const days = ["일", "월", "화", "수", "목", "금", "토"];
-        const firstDay = new Date(year, month - 1, 1).getDay(); // 1일 요일 (0=일)
+        const firstDay = new Date(year, month - 1, 1).getDay();
         let currentDay = 1;
         const daysInMonth = new Date(year, month, 0).getDate();
 
@@ -39,18 +45,28 @@ document.addEventListener("DOMContentLoaded", () => {
             const week = Math.floor(i / 5);
 
             if (mod === 0) {
-                // 요일 고정
                 for (let j = 1; j <= 7; j++) {
-                    dutyTable.rows[i].cells[j].innerText = days[j - 1];
+                    const cell = dutyTable.rows[i].cells[j];
+                    cell.innerText = days[j - 1];
+                    cell.classList.remove("sunday", "saturday", "weekday");
+                    if (j === 1) cell.classList.add("sunday");
+                    else if (j === 7) cell.classList.add("saturday");
+                    else cell.classList.add("weekday");
                 }
             } else if (mod === 1) {
-                // 날짜 자동 채움
                 for (let j = 1; j <= 7; j++) {
                     const dayIndex = week * 7 + (j - 1);
+                    const cell = dutyTable.rows[i].cells[j];
                     if (dayIndex >= firstDay && currentDay <= daysInMonth) {
-                        dutyTable.rows[i].cells[j].innerText = `${month}월 ${currentDay++}일`;
+                        const dateStr = `${year}-${month.toString().padStart(2, "0")}-${currentDay.toString().padStart(2, "0")}`;
+                        cell.innerText = `${month}월 ${currentDay++}일`;
+
+                        // 공휴일 스타일 적용
+                        if (holidays.includes(dateStr)) {
+                            cell.classList.add("holiday");
+                        }
                     } else {
-                        dutyTable.rows[i].cells[j].innerText = "-";
+                        cell.innerText = "-";
                     }
                 }
             } else if (mod === 2) {
@@ -89,12 +105,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         statTableBody.innerHTML = "";
         stats.forEach(row => {
+            const total = row.day + row.night;
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td>${row.name}</td>
-                <td>${row.day}</td>
-                <td>${row.night}</td>
-                <td>${row.day + row.night}</td>
+                <td>${row.weekdayDay || 0}</td>
+                <td>${row.weekdayNight || 0}</td>
+                <td>${row.weekendDay || 0}</td>
+                <td>${row.weekendNight || 0}</td>
+                <td>${row.holidayDay || 0}</td>
+                <td>${row.holidayNight || 0}</td>
+                <td>${total}</td>
             `;
             statTableBody.appendChild(tr);
         });

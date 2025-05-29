@@ -12,6 +12,7 @@ import tasks.repository.DutyCellRepository;
 import tasks.repository.DutyRecordRepository;
 import tasks.repository.UserRepository;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,8 +27,6 @@ public class DutyService {
 
     @Transactional
     public void saveDutyCells(List<DutyCellRequest> cells) {
-        // ❗ 기존 전체 삭제 → 월별 삭제로 변경 필요
-        // dutyRecordRepository.deleteAllInBatch(); ← 사용 안함
         if (!cells.isEmpty()) {
             LocalDate date = LocalDate.parse(cells.get(0).getDate());
             dutyRecordRepository.deleteByYearAndMonth(date.getYear(), date.getMonthValue());
@@ -52,16 +51,41 @@ public class DutyService {
         List<DutyRecord> all = dutyRecordRepository.findAll();
         Map<String, DutyStatResponse.DutyStatResponseBuilder> statMap = new HashMap<>();
 
+        Set<LocalDate> holidays = getHolidaySet();
+
         for (DutyRecord record : all) {
             if (!record.getDate().toString().startsWith(yearMonth)) continue;
 
             boolean isNight = record.getTime().contains("야간");
             String name = record.getName();
+            LocalDate date = record.getDate();
+            DayOfWeek day = date.getDayOfWeek();
+            boolean isWeekend = (day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY);
+            boolean isHoliday = holidays.contains(date);
+            boolean isWeekday = !isWeekend && !isHoliday;
 
-            statMap.putIfAbsent(name, DutyStatResponse.builder().name(name).day(0).night(0));
+            statMap.putIfAbsent(name, DutyStatResponse.builder()
+                    .name(name)
+                    .day(0).night(0)
+                    .weekdayDay(0).weekdayNight(0)
+                    .weekendDay(0).weekendNight(0)
+                    .holidayDay(0).holidayNight(0)
+            );
+
             var builder = statMap.get(name);
             if (isNight) builder.night(builder.build().getNight() + 1);
             else builder.day(builder.build().getDay() + 1);
+
+            if (isWeekday) {
+                if (isNight) builder.weekdayNight(builder.build().getWeekdayNight() + 1);
+                else builder.weekdayDay(builder.build().getWeekdayDay() + 1);
+            } else if (isWeekend) {
+                if (isNight) builder.weekendNight(builder.build().getWeekendNight() + 1);
+                else builder.weekendDay(builder.build().getWeekendDay() + 1);
+            } else if (isHoliday) {
+                if (isNight) builder.holidayNight(builder.build().getHolidayNight() + 1);
+                else builder.holidayDay(builder.build().getHolidayDay() + 1);
+            }
         }
 
         return statMap.values().stream()
@@ -70,13 +94,25 @@ public class DutyService {
                 .collect(Collectors.toList());
     }
 
+    private Set<LocalDate> getHolidaySet() {
+        return Set.of(
+                LocalDate.of(2025, 1, 1),
+                LocalDate.of(2025, 3, 1),
+                LocalDate.of(2025, 5, 5),
+                LocalDate.of(2025, 6, 6),
+                LocalDate.of(2025, 8, 15),
+                LocalDate.of(2025, 10, 3),
+                LocalDate.of(2025, 12, 25)
+        );
+    }
+
     @Transactional
     public void saveTable(DutySaveRequest dto) {
         int year = dto.getYear();
         int month = dto.getMonth();
 
         dutyCellRepository.deleteByYearAndMonth(year, month);
-        dutyRecordRepository.deleteByYearAndMonth(year, month); // ✅ 전체 삭제 → 월별 삭제
+        dutyRecordRepository.deleteByYearAndMonth(year, month);
 
         List<DutyCell> cells = new ArrayList<>();
         List<DutyRecord> records = new ArrayList<>();
