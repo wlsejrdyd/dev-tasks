@@ -1,20 +1,25 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const dutyTable = document.getElementById("duty-table").querySelector("tbody");
     const statTableBody = document.getElementById("stat-table").querySelector("tbody");
     const saveBtn = document.getElementById("save-btn");
     const yearSelect = document.getElementById("year-select");
     const monthSelect = document.getElementById("month-select");
 
-    // 간단 공휴일 목록 (예시)
-    const holidays = [
-        "2025-01-01", "2025-03-01", "2025-05-05", "2025-06-06",
-        "2025-08-15", "2025-10-03", "2025-10-09", "2025-12-25"
-    ];
+    let holidayMap = {};
+
+    async function loadHolidayMap() {
+        try {
+            const res = await fetch("/json/holidays.json");
+            holidayMap = await res.json();
+        } catch (err) {
+            console.error("공휴일 데이터를 불러오는 데 실패했습니다:", err);
+        }
+    }
 
     function createEditableGrid() {
         dutyTable.innerHTML = "";
         for (let w = 0; w < 5; w++) {
-            for (let r = 0; r < 5; r++) {
+            for (let r = 0; r < 6; r++) {
                 const tr = document.createElement("tr");
                 for (let c = 0; c < 8; c++) {
                     const td = document.createElement("td");
@@ -61,9 +66,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         const dateStr = `${year}-${month.toString().padStart(2, "0")}-${currentDay.toString().padStart(2, "0")}`;
                         cell.innerText = `${month}월 ${currentDay++}일`;
 
-                        // 공휴일 스타일 적용
-                        if (holidays.includes(dateStr)) {
+                        if (holidayMap[dateStr]) {
                             cell.classList.add("holiday");
+                            cell.title = holidayMap[dateStr];
                         }
                     } else {
                         cell.innerText = "-";
@@ -203,6 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    await loadHolidayMap();
     populateYearMonth();
     loadTable();
     loadStats();

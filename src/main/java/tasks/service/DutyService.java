@@ -12,10 +12,14 @@ import tasks.repository.DutyCellRepository;
 import tasks.repository.DutyRecordRepository;
 import tasks.repository.UserRepository;
 
+import java.io.InputStream;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,8 @@ public class DutyService {
     private final DutyRecordRepository dutyRecordRepository;
     private final UserRepository userRepository;
     private final DutyCellRepository dutyCellRepository;
+
+    private static Set<LocalDate> cachedHolidaySet;
 
     @Transactional
     public void saveDutyCells(List<DutyCellRequest> cells) {
@@ -60,8 +66,8 @@ public class DutyService {
             String name = record.getName();
             LocalDate date = record.getDate();
             DayOfWeek day = date.getDayOfWeek();
-            boolean isWeekend = (day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY);
             boolean isHoliday = holidays.contains(date);
+            boolean isWeekend = (day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY);
             boolean isWeekday = !isWeekend && !isHoliday;
 
             statMap.putIfAbsent(name, DutyStatResponse.builder()
@@ -76,15 +82,15 @@ public class DutyService {
             if (isNight) builder.night(builder.build().getNight() + 1);
             else builder.day(builder.build().getDay() + 1);
 
-            if (isWeekday) {
-                if (isNight) builder.weekdayNight(builder.build().getWeekdayNight() + 1);
-                else builder.weekdayDay(builder.build().getWeekdayDay() + 1);
+            if (isHoliday) {
+                if (isNight) builder.holidayNight(builder.build().getHolidayNight() + 1);
+                else builder.holidayDay(builder.build().getHolidayDay() + 1);
             } else if (isWeekend) {
                 if (isNight) builder.weekendNight(builder.build().getWeekendNight() + 1);
                 else builder.weekendDay(builder.build().getWeekendDay() + 1);
-            } else if (isHoliday) {
-                if (isNight) builder.holidayNight(builder.build().getHolidayNight() + 1);
-                else builder.holidayDay(builder.build().getHolidayDay() + 1);
+            } else {
+                if (isNight) builder.weekdayNight(builder.build().getWeekdayNight() + 1);
+                else builder.weekdayDay(builder.build().getWeekdayDay() + 1);
             }
         }
 
@@ -95,15 +101,23 @@ public class DutyService {
     }
 
     private Set<LocalDate> getHolidaySet() {
-        return Set.of(
-                LocalDate.of(2025, 1, 1),
-                LocalDate.of(2025, 3, 1),
-                LocalDate.of(2025, 5, 5),
-                LocalDate.of(2025, 6, 6),
-                LocalDate.of(2025, 8, 15),
-                LocalDate.of(2025, 10, 3),
-                LocalDate.of(2025, 12, 25)
-        );
+        if (cachedHolidaySet != null) return cachedHolidaySet;
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            InputStream is = getClass().getResourceAsStream("/static/json/holidays.json");
+            if (is == null) return Set.of();
+
+            Map<String, String> map = mapper.readValue(is, new TypeReference<>() {});
+            Set<LocalDate> result = map.keySet().stream()
+                    .map(LocalDate::parse)
+                    .collect(Collectors.toSet());
+            cachedHolidaySet = result;
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Set.of();
+        }
     }
 
     @Transactional
@@ -118,12 +132,18 @@ public class DutyService {
         List<DutyRecord> records = new ArrayList<>();
         List<DutySaveRequest.Row> rows = dto.getRows();
 
+        Map<Integer, LocalDate> dateMap = getDateIndexMap(year, month);
+
         for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
             DutySaveRequest.Row row = rows.get(rowIndex);
             int week = rowIndex / 3;
             String time = row.getTime();
             List<String> names = row.getData();
             for (int dayIndex = 0; dayIndex < names.size(); dayIndex++) {
+                int key = week * 7 + dayIndex;
+                LocalDate date = dateMap.get(key);
+                if (date == null) continue;
+
                 String[] splitNames = names.get(dayIndex).split("[,\\s]+");
                 for (String raw : splitNames) {
                     String name = raw.trim();
@@ -137,14 +157,11 @@ public class DutyService {
                                 .name(name)
                                 .build());
 
-                        LocalDate date = getDateFromWeekDay(year, month, week, dayIndex);
-                        if (date != null) {
-                            records.add(DutyRecord.builder()
-                                    .date(date)
-                                    .name(name)
-                                    .time(time)
-                                    .build());
-                        }
+                        records.add(DutyRecord.builder()
+                                .date(date)
+                                .name(name)
+                                .time(time)
+                                .build());
                     }
                 }
             }
@@ -154,14 +171,18 @@ public class DutyService {
         dutyRecordRepository.saveAll(records);
     }
 
-    private LocalDate getDateFromWeekDay(int year, int month, int weekIndex, int dayIndex) {
-        try {
-            LocalDate first = LocalDate.of(year, month, 1);
-            int offset = (weekIndex * 7 + dayIndex) - (first.getDayOfWeek().getValue() % 7);
-            return first.plusDays(offset);
-        } catch (Exception e) {
-            return null;
+    private Map<Integer, LocalDate> getDateIndexMap(int year, int month) {
+        Map<Integer, LocalDate> map = new HashMap<>();
+        LocalDate first = LocalDate.of(year, month, 1);
+        int firstDayIndex = first.getDayOfWeek().getValue() % 7;
+
+        int daysInMonth = first.lengthOfMonth();
+        for (int d = 1; d <= daysInMonth; d++) {
+            LocalDate date = LocalDate.of(year, month, d);
+            int index = ((d + firstDayIndex - 1) / 7) * 7 + ((date.getDayOfWeek().getValue() % 7));
+            map.put(index, date);
         }
+        return map;
     }
 
     public List<DutyCell> getDutyCells(int year, int month) {
