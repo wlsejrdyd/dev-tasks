@@ -1,0 +1,48 @@
+/* 주간보고서 페이지 전용 스타일 */
+
+h2 {
+    margin-bottom: 16px;
+}
+
+label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+select {
+    padding: 4px 8px;
+    margin-right: 8px;
+}
+
+button {
+    padding: 6px 14px;
+    font-size: 14px;
+    border: 1px solid #888;
+    border-radius: 4px;
+    background-color: #f4f4f4;
+    cursor: pointer;
+    margin-left: 8px;
+}
+
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+.preview-table th,
+.preview-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+    vertical-align: top;
+    font-size: 14px;
+}
+
+.preview-table thead {
+    background-color: #f0f0f0;
+}
+
+.preview-table tbody tr:hover {
+    background-color: #f9f9f9;
+}

@@ -15,4 +15,8 @@
      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/attendance')} ? 'active'">근태 관리</a>
   <a href="/duty"
      th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/attendance')} ? 'active'">당직근무 관리</a>
+  <a href="/weekly"
+     th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/attendance')} ? 'active'">주간보고</a>
+  <a href="/schedule"
+     th:classappend="${#httpServletRequest != null and #httpServletRequest.requestURI.startsWith('/attendance')} ? 'active'">일정 관리</a>
 </div>

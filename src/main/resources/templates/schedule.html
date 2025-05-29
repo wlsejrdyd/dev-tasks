@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>일정 관리</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/schedule.css">
+    <script src="/js/schedule.js" defer></script>
+    <script src="/js/logout-timer.js" defer></script>
+    <script src="/js/calendar.js" defer></script>
+</head>
+<body>
+<div class="dashboard-wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div th:replace="~{fragments/topbar :: topbar}"></div>
+    <div th:replace="~{fragments/calendar :: calendar}"></div>
+
+    <main class="main-content">
+        <section>
+            <h2>🗓 일정 관리</h2>
+            <label>
+                연도:
+                <select id="year-select"></select>
+            </label>
+            <label style="margin-left: 10px;">
+                월:
+                <select id="month-select"></select>
+            </label>
+            <button id="add-schedule-btn">+ 일정 추가</button>
+        </section>
+
+        <section style="margin-top: 20px;">
+            <div id="calendar-container">
+                <!-- 달력은 JS에서 동적으로 생성됨 -->
+            </div>
+        </section>
+    </main>
+
+    <!-- 일정 등록 모달 -->
+    <div id="schedule-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>📌 일정 등록</h3>
+            <form id="schedule-form">
+                <label>일정명</label>
+                <input type="text" id="schedule-title" required>
+
+                <label>시작일시</label>
+                <input type="datetime-local" id="schedule-start" required>
+
+                <label>종료일시</label>
+                <input type="datetime-local" id="schedule-end" required>
+
+                <label>참석자</label>
+                <input type="text" id="schedule-attendees" placeholder="예: 홍길동, 김철수">
+
+                <label>내용</label>
+                <textarea id="schedule-desc" rows="4"></textarea>
+
+                <button type="submit">저장</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
