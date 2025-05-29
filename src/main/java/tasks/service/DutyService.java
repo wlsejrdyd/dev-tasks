@@ -26,7 +26,12 @@ public class DutyService {
 
     @Transactional
     public void saveDutyCells(List<DutyCellRequest> cells) {
-        dutyRecordRepository.deleteAllInBatch();
+        // ❗ 기존 전체 삭제 → 월별 삭제로 변경 필요
+        // dutyRecordRepository.deleteAllInBatch(); ← 사용 안함
+        if (!cells.isEmpty()) {
+            LocalDate date = LocalDate.parse(cells.get(0).getDate());
+            dutyRecordRepository.deleteByYearAndMonth(date.getYear(), date.getMonthValue());
+        }
 
         List<DutyRecord> records = new ArrayList<>();
         for (DutyCellRequest cell : cells) {
@@ -71,7 +76,7 @@ public class DutyService {
         int month = dto.getMonth();
 
         dutyCellRepository.deleteByYearAndMonth(year, month);
-        dutyRecordRepository.deleteAllInBatch();
+        dutyRecordRepository.deleteByYearAndMonth(year, month); // ✅ 전체 삭제 → 월별 삭제
 
         List<DutyCell> cells = new ArrayList<>();
         List<DutyRecord> records = new ArrayList<>();
