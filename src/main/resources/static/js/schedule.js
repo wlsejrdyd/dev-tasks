@@ -92,7 +92,9 @@ document.addEventListener("DOMContentLoaded", function () {
                             e.stopPropagation();
                             const s = JSON.parse(eventDiv.dataset.schedule);
                             editingId = s.id;
+                            modal.classList.remove("hidden");
                             modal.style.display = "block";
+                            form.reset();
                             startInput.value = s.startDate.replace(" ", "T");
                             endInput.value = s.endDate.replace(" ", "T");
                             document.getElementById("schedule-title").value = s.title;
@@ -112,6 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function openModal(dateStr) {
+        modal.classList.remove("hidden");
         modal.style.display = "block";
         form.reset();
         editingId = null;
@@ -124,6 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     closeBtn.addEventListener("click", () => {
         modal.style.display = "none";
+        modal.classList.add("hidden");
     });
 
     form.addEventListener("submit", function (e) {
@@ -148,6 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (res.ok) {
                 alert("저장 성공");
                 modal.style.display = "none";
+                modal.classList.add("hidden");
                 renderCalendar(Number(yearSelect.value), Number(monthSelect.value));
             } else {
                 alert("저장 실패");
@@ -163,6 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (res.ok) {
                     alert("삭제 완료");
                     modal.style.display = "none";
+                    modal.classList.add("hidden");
                     renderCalendar(Number(yearSelect.value), Number(monthSelect.value));
                 } else {
                     alert("삭제 실패");
@@ -186,3 +192,4 @@ document.addEventListener("DOMContentLoaded", function () {
         renderCalendar(Number(yearSelect.value), Number(monthSelect.value));
     });
 });
+
