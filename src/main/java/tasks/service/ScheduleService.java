@@ -7,7 +7,8 @@ import tasks.dto.ScheduleRequest;
 import tasks.entity.Schedule;
 import tasks.repository.ScheduleRepository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 
 @Service
@@ -20,8 +21,8 @@ public class ScheduleService {
         Schedule schedule = Schedule.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
-                .startDate(LocalDate.parse(request.getStartDate()))
-                .endDate(LocalDate.parse(request.getEndDate()))
+                .startDate(LocalDateTime.parse(request.getStartDate()))
+                .endDate(LocalDateTime.parse(request.getEndDate()))
                 .attendees(request.getAttendees())
                 .time(request.getTime())
                 .build();
@@ -29,9 +30,10 @@ public class ScheduleService {
     }
 
     public List<Schedule> findByYearAndMonth(int year, int month) {
-        LocalDate start = LocalDate.of(year, month, 1);
-        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
-        return scheduleRepository.findByStartDateBetween(start, end);
+        YearMonth ym = YearMonth.of(year, month);
+        LocalDateTime start = ym.atDay(1).atStartOfDay();
+        LocalDateTime end = ym.atEndOfMonth().atTime(23, 59, 59);
+        return scheduleRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(end, start);
     }
 
     @Transactional
@@ -40,8 +42,8 @@ public class ScheduleService {
                 .orElseThrow(() -> new RuntimeException("Schedule not found"));
         schedule.setTitle(request.getTitle());
         schedule.setContent(request.getContent());
-        schedule.setStartDate(LocalDate.parse(request.getStartDate()));
-        schedule.setEndDate(LocalDate.parse(request.getEndDate()));
+        schedule.setStartDate(LocalDateTime.parse(request.getStartDate()));
+        schedule.setEndDate(LocalDateTime.parse(request.getEndDate()));
         schedule.setAttendees(request.getAttendees());
         schedule.setTime(request.getTime());
         scheduleRepository.save(schedule);

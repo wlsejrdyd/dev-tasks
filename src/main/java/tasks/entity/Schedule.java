@@ -3,7 +3,7 @@ package tasks.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -22,9 +22,9 @@ public class Schedule {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
     private String attendees;
 
