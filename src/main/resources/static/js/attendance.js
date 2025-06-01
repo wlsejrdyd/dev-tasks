@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const deleteBtn = document.getElementById("delete-selected");
     const downloadBtn = document.getElementById("download-excel");
     const monthSelector = document.getElementById("month-selector");
+    const userSelector = document.getElementById("user-selector");
 
     let users = [];
     let allRecords = [];
@@ -22,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function getMonth(dateStr) {
-        return dateStr?.substring(0, 7); // '2025-05'
+        return dateStr?.substring(0, 7);
     }
 
     function buildMonthSelector() {
@@ -32,10 +33,26 @@ document.addEventListener("DOMContentLoaded", function () {
             months.map(m => `<option value="${m}">${m}</option>`).join('');
     }
 
-    function filterRecordsByMonth(month) {
-        const filtered = month
-            ? allRecords.filter(r => getMonth(r.startDate) === month)
-            : allRecords;
+    function populateUserSelector() {
+        if (!userSelector) return;
+        userSelector.innerHTML = `<option value="">전체</option>` +
+            users.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
+    }
+
+    function filterRecords() {
+        const selectedMonth = monthSelector.value;
+        const selectedUserId = userSelector?.value || "";
+        let filtered = allRecords;
+
+        if (selectedMonth) {
+            filtered = filtered.filter(r => getMonth(r.startDate) === selectedMonth);
+        }
+
+        if (selectedUserId) {
+            filtered = filtered.filter(r => String(r.userId) === selectedUserId);
+        }
+
+        filtered.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
         renderRecordRows(filtered);
     }
 
@@ -81,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         allRecords = combined;
         buildMonthSelector();
-        filterRecordsByMonth(monthSelector.value);
+        filterRecords();
     }
 
     function addRow() {
@@ -96,9 +113,9 @@ document.addEventListener("DOMContentLoaded", function () {
             <td>
                 <select class="type-select">
                     <option value="">-- 선택 --</option>
-                    <option value="연차사용">연차 사용</option>
-                    <option value="대휴사용">대휴 사용</option>
-                    <option value="대휴부여">대휴 부여</option>
+                    <option value="연차사용">연차사용</option>
+                    <option value="대휴사용">대휴사용</option>
+                    <option value="대휴부여">대휴부여</option>
                     <option value="기타">기타</option>
                 </select>
             </td>
@@ -107,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <td contenteditable="true" class="editable-cell"></td>
             <td contenteditable="true" class="editable-cell"></td>
         `;
-        recordBody.appendChild(tr);
+        recordBody.prepend(tr);
     }
 
     async function saveRecords() {
@@ -187,46 +204,51 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = "/api/attendance/export";
     }
 
-    function loadStatus() {
-        fetch("/api/attendance/status")
-            .then(res => res.json())
-            .then(data => {
-                statusBody.innerHTML = "";
-                data.forEach(row => {
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td>${row.userName}</td>
-                        <td>${row.joinDate}</td>
-                        <td>${row.leaveDate || "-"}</td>
-                        <td>${row.annualGranted}</td>
-                        <td>${row.annualUsed}</td>
-                        <td>${row.annualRemain}</td>
-                        <td>${row.compensatoryGranted}</td>
-                        <td>${row.compensatoryUsed}</td>
-                        <td>${row.compensatoryRemain}</td>
-                        <td>${row.annualGranted + row.compensatoryGranted}</td>
-                        <td>${row.annualUsed + row.compensatoryUsed}</td>
-                        <td>${row.annualRemain + row.compensatoryRemain}</td>
-                    `;
-                    statusBody.appendChild(tr);
-                });
-            });
+    async function loadStatus() {
+        const res = await fetch("/api/attendance/status");
+        const data = await res.json();
+        statusBody.innerHTML = "";
+
+        users = data.map(row => ({
+            id: row.userId,
+            name: row.userName
+        }));
+
+        populateUserSelector();
+
+        data.forEach(row => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${row.userName}</td>
+                <td>${row.joinDate}</td>
+                <td>${row.leaveDate || "-"}</td>
+                <td>${row.annualGranted}</td>
+                <td>${row.annualUsed}</td>
+                <td>${row.annualRemain}</td>
+                <td>${row.compensatoryGranted}</td>
+                <td>${row.compensatoryUsed}</td>
+                <td>${row.compensatoryRemain}</td>
+                <td>${row.annualGranted + row.compensatoryGranted}</td>
+                <td>${row.annualUsed + row.compensatoryUsed}</td>
+                <td>${row.annualRemain + row.compensatoryRemain}</td>
+            `;
+            statusBody.appendChild(tr);
+        });
     }
 
     monthSelector.addEventListener("change", () => {
-        filterRecordsByMonth(monthSelector.value);
+        filterRecords();
     });
-
+    userSelector?.addEventListener("change", () => {
+        filterRecords();
+    });
     addRowBtn.addEventListener("click", addRow);
     saveBtn.addEventListener("click", () => setTimeout(saveRecords, 100));
     deleteBtn.addEventListener("click", deleteSelected);
     downloadBtn.addEventListener("click", downloadExcel);
 
-    fetch("/api/users")
-        .then(res => res.json())
-        .then(data => {
-            users = data;
-            loadAllRecords();
-            loadStatus();
-        });
+    loadStatus().then(() => {
+        loadAllRecords();
+    });
 });
+
