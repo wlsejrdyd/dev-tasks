@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <title>대시보드</title>
   <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
   <script src="/js/logout-timer.js" defer></script>
   <script src="/js/calendar.js" defer></script>
+  <script src="/js/dashboard.js" defer></script>
 </head>
 <body>
 
@@ -14,42 +16,47 @@
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
     <div th:replace="~{fragments/topbar :: topbar}"></div>
     <div th:replace="~{fragments/calendar :: calendar}"></div>
-    
+
     <!-- 본문 영역 -->
     <div class="main-content">
       <div class="dashboard-container">
+
         <h1>관리 대시보드</h1>
-    
+        <!-- 🆕 다가오는 일정 박스 -->
+        <div class="upcoming-schedule-box">
+          <h2>📅 다가오는 일정</h2>
+          <ul class="upcoming-schedule-list" id="upcoming-list">
+            <!-- JS에서 동적으로 삽입 -->
+          </ul>
+        </div>
         <div class="card-grid">
-    
-          <!-- 프로젝트 관리 카드 -->
+          <!-- 프로젝트 카드 -->
           <div class="card">
             <h2>프로젝트</h2>
             <p>🚧 진행중: <span th:text="${projectInProgress}">0</span></p>
             <p>✅ 완료됨: <span th:text="${projectCompleted}">0</span></p>
             <p>⏸ 보류중: <span th:text="${projectPending}">0</span></p>
           </div>
-    
-          <!-- IP 주소 관리 카드 -->
+
+          <!-- IP 관리 카드 -->
           <div class="card">
             <h2>IP 관리</h2>
             <p>🖧 추가된 대역: <span th:text="${ipRangeCount}">0</span></p>
             <p>🟢 활성 호스트: <span th:text="${ipUpCount}">0</span></p>
             <p>🔴 비활성 호스트: <span th:text="${ipDownCount}">0</span></p>
           </div>
-    
+
           <!-- DNS 도메인 카드 -->
           <div class="card">
             <h2>DNS 관리</h2>
             <p>🌐관리 중인 DNS 갯수: <span th:text="${dnsCount ?: 0}">0</span>개</p>
           </div>
-    
+
           <!-- 내부 서비스 카드 -->
           <div class="card">
             <h2>내부 서비스</h2>
             <p>🛠등록 된 서비스 :<span th:text="${internalServiceTotal ?: 0}">0</span>개</p>
           </div>
-    
         </div>
       </div>
     </div>

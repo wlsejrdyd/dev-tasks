@@ -4,8 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import tasks.service.DashboardService;
+import org.springframework.web.bind.annotation.ResponseBody;
+import tasks.dto.SchedulePreviewResponse;
 import tasks.service.DashboardIpStatService;
+import tasks.service.DashboardService;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,9 +33,15 @@ public class DashboardController {
         model.addAttribute("ipUpCount", dashboardIpStatService.getIpUpCount());
         model.addAttribute("ipDownCount", dashboardIpStatService.getIpDownCount());
 
-        // ✅ 내부 서비스 수 개별 카드용
         model.addAttribute("internalServiceTotal", dashboardService.getInternalServiceTotalCount());
 
         return "dashboard";
+    }
+
+    // 🟢 다가오는 일정 미리보기 API
+    @GetMapping("/api/dashboard/schedule/preview")
+    @ResponseBody
+    public List<SchedulePreviewResponse> previewSchedules() {
+        return dashboardService.getUpcomingSchedules();
     }
 }

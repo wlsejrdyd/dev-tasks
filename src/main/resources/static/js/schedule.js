@@ -192,4 +192,3 @@ document.addEventListener("DOMContentLoaded", function () {
         renderCalendar(Number(yearSelect.value), Number(monthSelect.value));
     });
 });
-
