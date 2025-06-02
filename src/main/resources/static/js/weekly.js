@@ -2,110 +2,115 @@ document.addEventListener("DOMContentLoaded", function () {
   const yearSelect = document.getElementById("year-select");
   const monthSelect = document.getElementById("month-select");
   const weekSelect = document.getElementById("week-select");
+  const categoryFilter = document.getElementById("category-filter");
   const loadBtn = document.getElementById("load-btn");
   const saveBtn = document.getElementById("save-btn");
   const addRowBtn = document.getElementById("add-row-btn");
-  const tbody = document.getElementById("report-body");
+  const tableBody = document.getElementById("weekly-body");
 
-  let categoryList = [];
-
-  // 카테고리 목록 불러오기
-  fetch("/api/weekly/categories")
-    .then((res) => res.json())
-    .then((data) => {
-      categoryList = data;
-    })
-    .catch(() => {
-      alert("카테고리 불러오기 실패");
-      categoryList = [{ name: "기타" }];
-    });
-
-  const now = new Date();
-  for (let y = now.getFullYear(); y >= now.getFullYear() - 3; y--) {
-    yearSelect.innerHTML += `<option value="${y}">${y}년</option>`;
-  }
-  for (let m = 1; m <= 12; m++) {
-    monthSelect.innerHTML += `<option value="${String(m).padStart(2, "0")}">${m}월</option>`;
-  }
-  for (let w = 1; w <= 5; w++) {
-    weekSelect.innerHTML += `<option value="${w}">${w}주차</option>`;
+  function fillCategoryFilter() {
+    fetch("/api/weekly/categories")
+      .then(res => res.json())
+      .then(data => {
+        categoryFilter.innerHTML = `<option value="all">전체 카테고리</option>`;
+        data.forEach(cat => {
+          const opt = document.createElement("option");
+          opt.value = cat.name;
+          opt.textContent = cat.name;
+          categoryFilter.appendChild(opt);
+        });
+      });
   }
 
-  yearSelect.value = now.getFullYear();
-  monthSelect.value = String(now.getMonth() + 1).padStart(2, "0");
-  weekSelect.value = 1;
-
-  loadBtn.addEventListener("click", function () {
+  function loadReports() {
     const year = yearSelect.value;
     const month = monthSelect.value;
     const week = weekSelect.value;
+    const category = categoryFilter.value;
 
-    fetch(`/api/weekly?year=${year}&month=${month}&week=${week}`)
-      .then((res) => res.json())
-      .then((data) => renderTable(data))
-      .catch(() => alert("불러오기 실패"));
-  });
+    fetch(`/api/weekly/reports?year=${year}&month=${month}&week=${week}`)
+      .then(res => res.json())
+      .then(data => {
+        tableBody.innerHTML = "";
+        data.forEach(row => {
+          if (category !== "all" && row.category !== category) return;
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><input type="date" value="${row.date}" class="report-date"></td>
+            <td><input type="text" value="${row.category}" class="report-category"></td>
+            <td><input type="text" value="${row.title}" class="report-title"></td>
+            <td><input type="text" value="${row.content}" class="report-content" style="width: 100%"></td>
+          `;
+          tableBody.appendChild(tr);
+        });
+      });
+  }
 
-  saveBtn.addEventListener("click", function () {
-    const rows = tbody.querySelectorAll("tr");
+  function saveReports() {
     const year = yearSelect.value;
     const month = monthSelect.value;
     const week = weekSelect.value;
+    const rows = tableBody.querySelectorAll("tr");
 
-    const reports = Array.from(rows).map((row) => {
-      const date = row.querySelector("input.date")?.value.trim();
-      const category = row.querySelector("select.category")?.value.trim();
-      const title = row.querySelector("td.title")?.innerText.trim();
-      const content = row.querySelector("td.content")?.innerText.trim();
-      return { date, category, title, content };
+    const data = Array.from(rows).map(tr => {
+      return {
+        date: tr.querySelector(".report-date").value,
+        category: tr.querySelector(".report-category").value,
+        title: tr.querySelector(".report-title").value,
+        content: tr.querySelector(".report-content").value,
+      };
     });
 
-    fetch("/api/weekly?year=" + year + "&month=" + month + "&week=" + week, {
+    fetch("/api/weekly/reports", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(reports),
-    })
-      .then((res) => {
-        if (res.ok) alert("저장 완료");
-        else throw new Error();
-      })
-      .catch(() => alert("저장 실패"));
-  });
-
-  addRowBtn.addEventListener("click", function () {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td><input type="date" class="date" style="width:100%; border: none;"></td>
-      <td>${renderCategorySelect()}</td>
-      <td class="title" contenteditable="true"></td>
-      <td class="content" contenteditable="true"></td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  function renderTable(data) {
-    tbody.innerHTML = "";
-    data.forEach((item) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><input type="date" class="date" value="${item.date || ""}" style="width:100%; border: none;"></td>
-        <td>${renderCategorySelect(item.category)}</td>
-        <td class="title" contenteditable="true">${item.title || ""}</td>
-        <td class="content" contenteditable="true">${item.content || ""}</td>
-      `;
-      tbody.appendChild(tr);
+      body: JSON.stringify({ year, month, week, reports: data }),
+    }).then(() => {
+      alert("저장 완료");
+      loadReports();
     });
   }
 
-  function renderCategorySelect(selectedValue = "") {
-    const options = categoryList
-      .map(
-        (cat) =>
-          `<option value="${cat.name}" ${
-            cat.name === selectedValue ? "selected" : ""
-          }>${cat.name}</option>`
-      )
-      .join("");
-    return `<select class="category" style="width:100%; border:none; background:none;">${options}</select>`;
+  function initSelects() {
+    const now = new Date();
+    for (let y = now.getFullYear() - 1; y <= now.getFullYear(); y++) {
+      const opt = document.createElement("option");
+      opt.value = y;
+      opt.textContent = `${y}년`;
+      yearSelect.appendChild(opt);
+    }
+    for (let m = 1; m <= 12; m++) {
+      const opt = document.createElement("option");
+      opt.value = m;
+      opt.textContent = `${m}월`;
+      monthSelect.appendChild(opt);
+    }
+    for (let w = 1; w <= 5; w++) {
+      const opt = document.createElement("option");
+      opt.value = w;
+      opt.textContent = `${w}주차`;
+      weekSelect.appendChild(opt);
+    }
+
+    yearSelect.value = now.getFullYear();
+    monthSelect.value = now.getMonth() + 1;
+    weekSelect.value = 1;
   }
+
+  loadBtn.addEventListener("click", loadReports);
+  saveBtn.addEventListener("click", saveReports);
+  addRowBtn.addEventListener("click", () => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input type="date" class="report-date"></td>
+      <td><input type="text" class="report-category"></td>
+      <td><input type="text" class="report-title"></td>
+      <td><input type="text" class="report-content" style="width: 100%"></td>
+    `;
+    tableBody.appendChild(tr);
+  });
+
+  initSelects();
+  fillCategoryFilter();
+  loadReports();
 });

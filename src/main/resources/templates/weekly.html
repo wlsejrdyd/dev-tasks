@@ -1,55 +1,46 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>주간보고서</title>
-    <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/css/duty.css">
-    <link rel="stylesheet" href="/css/attendance.css">
-    <link rel="stylesheet" href="/css/weekly.css">
-    <script src="/js/weekly.js" defer></script>
-    <script src="/js/logout-timer.js" defer></script>
-    <script src="/js/calendar.js" defer></script>
+  <meta charset="UTF-8">
+  <title>주간보고서 작성</title>
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/weekly.css">
+  <script src="/js/weekly.js" defer></script>
+  <script src="/js/logout-timer.js" defer></script>
 </head>
 <body>
 <div class="dashboard-wrapper">
-    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <div th:replace="~{fragments/topbar :: topbar}"></div>
-    <div th:replace="~{fragments/calendar :: calendar}"></div>
+  <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+  <div th:replace="~{fragments/topbar :: topbar}"></div>
 
-    <main class="main-content">
-        <section>
-            <h2>📝 주간보고서 작성</h2>
-            <label>연도:
-                <select id="year-select"></select>
-            </label>
-            <label style="margin-left: 10px;">월:
-                <select id="month-select"></select>
-            </label>
-            <label style="margin-left: 10px;">주차:
-                <select id="week-select"></select>
-            </label>
-            <button id="load-btn">불러오기</button>
-            <button id="save-btn">저장</button>
-            <button id="add-row-btn">행 추가</button>
-        </section>
+  <div class="main-content">
+    <h1>📝 주간보고서 작성</h1>
+    <div class="filter-bar">
+      <select id="year-select"></select>
+      <select id="month-select"></select>
+      <select id="week-select"></select>
+      <select id="category-filter">
+        <option value="all">전체 카테고리</option>
+      </select>
+      <button id="load-btn">불러오기</button>
+      <button id="save-btn">저장</button>
+      <button id="add-row-btn">행 추가</button>
+    </div>
 
-        <section style="margin-top: 20px;">
-            <table class="preview-table">
-                <thead>
-                    <tr>
-                        <th style="width: 20%;">날짜 (yyyy-MM-dd)</th>
-                        <th style="width: 20%;">카테고리</th>
-                        <th style="width: 30%;">제목</th>
-                        <th style="width: 30%;">내용</th>
-                    </tr>
-                </thead>
-                <tbody id="report-body">
-                    <!-- 동적 행 삽입 -->
-                </tbody>
-            </table>
-        </section>
-    </main>
+    <table id="weekly-table">
+      <thead>
+        <tr>
+          <th>날짜 (yyyy-MM-dd)</th>
+          <th>카테고리</th>
+          <th>제목</th>
+          <th style="width: 40%">내용</th>
+        </tr>
+      </thead>
+      <tbody id="weekly-body">
+        <!-- 동적 데이터 -->
+      </tbody>
+    </table>
+  </div>
 </div>
 </body>
 </html>

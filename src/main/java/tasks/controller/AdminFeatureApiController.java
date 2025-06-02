@@ -16,7 +16,7 @@ public class AdminFeatureApiController {
 
     @PostMapping("/categories")
     public void saveCategory(@RequestBody CategorySaveRequest request) {
-        adminService.saveCategory(request);
+        adminService.saveWeeklyCategory(request);
     }
 
     @PostMapping("/notices")
@@ -27,5 +27,10 @@ public class AdminFeatureApiController {
     @PostMapping("/poll")
     public void savePoll(@RequestBody PollRequest request) {
         adminService.savePoll(request);
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public void deleteCategory(@PathVariable Long id) {
+        adminService.deleteWeeklyCategory(id);
     }
 }

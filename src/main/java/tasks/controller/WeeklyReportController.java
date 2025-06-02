@@ -22,6 +22,13 @@ public class WeeklyReportController {
         return weeklyReportService.getWeeklyReports(year, month, week);
     }
 
+    @GetMapping("/reports")  // 🔥 추가된 경로
+    public List<WeeklyReportResponse> getReports(@RequestParam int year,
+                                                 @RequestParam int month,
+                                                 @RequestParam int week) {
+        return weeklyReportService.getWeeklyReports(year, month, week);
+    }
+
     @PostMapping
     public void saveWeeklyReports(@RequestParam int year,
                                   @RequestParam int month,
