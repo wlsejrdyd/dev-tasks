@@ -11,8 +11,8 @@ import tasks.repository.PollOptionRepository;
 import tasks.repository.PollRepository;
 import tasks.repository.PollVoteRepository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/poll")
@@ -24,9 +24,28 @@ public class PollController {
     private final PollVoteRepository voteRepository;
 
     @GetMapping
-    public Poll getPoll() {
-        return pollRepository.findFirstByIsActiveTrueOrderByCreatedAtDesc()
-                .orElse(null);
+    public Map<String, Object> getPollWithVoteStatus(@RequestParam(required = false, defaultValue = "1") Long userId) {
+        Optional<Poll> optionalPoll = pollRepository.findFirstByIsActiveTrueOrderByCreatedAtDesc();
+
+        if (optionalPoll.isEmpty()) return Collections.emptyMap();
+
+        Poll poll = optionalPoll.get();
+        boolean voted = voteRepository.findByPollIdAndUserId(poll.getId(), userId).isPresent();
+
+        List<Map<String, Object>> options = poll.getOptions().stream().map(opt -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", opt.getId());
+            map.put("optionText", opt.getOptionText());
+            map.put("voteCount", opt.getVoteCount());
+            return map;
+        }).collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", poll.getId());
+        response.put("question", poll.getQuestion());
+        response.put("voted", voted);
+        response.put("options", options);
+        return response;
     }
 
     @PostMapping("/vote")
