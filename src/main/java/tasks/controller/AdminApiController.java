@@ -6,7 +6,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tasks.entity.User;
 import tasks.entity.User.Role;
+import tasks.repository.AttendanceStatusRepository;
 import tasks.repository.UserRepository;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,7 @@ import java.util.Optional;
 public class AdminApiController {
 
     private final UserRepository userRepository;
+    private final AttendanceStatusRepository attendanceStatusRepository;
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
@@ -42,12 +45,18 @@ public class AdminApiController {
         }
     }
 
+    @Transactional
     @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        if (!userRepository.existsById(id)) {
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("사용자를 찾을 수 없습니다.");
         }
+
+        User user = userOpt.get();
+        attendanceStatusRepository.deleteByUser(user); // ✅ 연관 근태 상태 먼저 삭제
         userRepository.deleteById(id);
+
         return ResponseEntity.ok("삭제되었습니다.");
     }
 }

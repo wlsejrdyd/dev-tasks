@@ -13,4 +13,6 @@ public interface AttendanceStatusRepository extends JpaRepository<AttendanceStat
     Optional<AttendanceStatus> findByUser(User user);
 
     boolean existsByUser(User user);
+
+    void deleteByUser(User user); // ✅ 새로 추가
 }

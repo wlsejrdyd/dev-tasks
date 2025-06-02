@@ -1,25 +1,75 @@
-/* 다가오는 일정 박스 */
+/* 기존 일정 박스 */
 .upcoming-schedule-box {
   background-color: #f8f9fa;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
   margin-bottom: 32px;
-  width: 100%;
-}
-
-.upcoming-schedule-box h2 {
-  font-size: 18px;
-  margin-bottom: 12px;
-}
-
-.upcoming-schedule-list {
-  max-height: 180px;
+  width: calc(66% - 16px);
+  display: inline-block;
+  vertical-align: top;
+  max-height: 250px;
   overflow-y: auto;
+}
+
+/* 상단 행: 일정 + 오른쪽 카드 */
+.dashboard-top-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+/* 오른쪽 공지/투표 컬럼 */
+.right-info-column {
+  width: 34%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 공지 박스 */
+.notice-box {
+  background-color: #fff7e6;
+  padding: 16px;
+  border-radius: 10px;
+  height: 180px;
+  overflow-y: auto;
+  box-shadow: 0 0 6px rgba(0,0,0,0.05);
+}
+.notice-box h2 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.notice-list {
+  font-size: 14px;
   padding-left: 20px;
 }
+.notice-list li {
+  margin-bottom: 6px;
+}
 
-.upcoming-schedule-list li {
+/* 투표 박스 */
+.poll-box {
+  background-color: #eef6ff;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.05);
+}
+.poll-box h2 {
+  font-size: 16px;
   margin-bottom: 8px;
-  font-size: 14px;
+}
+.poll-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.poll-box button {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }

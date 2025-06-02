@@ -34,6 +34,41 @@
           <!-- JS에서 비동기 로딩 -->
         </tbody>
       </table>
+
+      <hr><br>
+
+      <!-- 📁 카테고리 관리 -->
+      <section>
+        <h2>📁 주간보고 카테고리 관리</h2>
+        <ul id="category-list"></ul>
+        <input type="text" id="new-category" placeholder="새 카테고리">
+        <button id="add-category-btn">추가</button>
+      </section>
+
+      <br><hr><br>
+
+      <!-- 📢 공지사항 작성 -->
+      <section>
+        <h2>📢 공지사항 작성</h2>
+        <input type="text" id="notice-title" placeholder="제목" style="width: 400px;"><br><br>
+        <textarea id="notice-content" rows="5" cols="80" placeholder="내용 입력"></textarea><br>
+        <label><input type="checkbox" id="notice-pinned"> 상단 고정</label><br>
+        <button id="notice-submit-btn">공지 등록</button>
+      </section>
+
+      <br><hr><br>
+
+      <!-- 🗳 투표 만들기 -->
+      <section>
+        <h2>🗳 투표 만들기</h2>
+        <input type="text" id="poll-question" placeholder="질문" style="width: 400px;"><br><br>
+        <div id="poll-options">
+          <input type="text" class="poll-option" placeholder="선택지 1"><br>
+          <input type="text" class="poll-option" placeholder="선택지 2"><br>
+        </div>
+        <button id="add-poll-option-btn">선택지 추가</button>
+        <button id="poll-submit-btn">투표 등록</button>
+      </section>
     </div>
   </div>
 </body>
