@@ -7,7 +7,8 @@ import lombok.Data;
 @Builder
 public class WeeklyReportResponse {
     private String date;
-    private String category;
+    private Long categoryId;
+    private String categoryName;
     private String title;
     private String content;
 }

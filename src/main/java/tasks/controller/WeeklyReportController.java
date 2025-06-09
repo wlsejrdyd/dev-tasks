@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import tasks.dto.WeeklyReportRequest;
 import tasks.dto.WeeklyReportResponse;
+import tasks.dto.WeeklyReportSaveRequest;
 import tasks.service.WeeklyReportService;
 
 import java.util.List;
@@ -15,25 +16,20 @@ public class WeeklyReportController {
 
     private final WeeklyReportService weeklyReportService;
 
-    @GetMapping
-    public List<WeeklyReportResponse> getWeeklyReports(@RequestParam int year,
-                                                       @RequestParam int month,
-                                                       @RequestParam int week) {
-        return weeklyReportService.getWeeklyReports(year, month, week);
-    }
-
-    @GetMapping("/reports")  // 🔥 추가된 경로
+    @GetMapping("/reports")
     public List<WeeklyReportResponse> getReports(@RequestParam int year,
                                                  @RequestParam int month,
                                                  @RequestParam int week) {
         return weeklyReportService.getWeeklyReports(year, month, week);
     }
 
-    @PostMapping
-    public void saveWeeklyReports(@RequestParam int year,
-                                  @RequestParam int month,
-                                  @RequestParam int week,
-                                  @RequestBody List<WeeklyReportRequest> reports) {
-        weeklyReportService.saveWeeklyReports(year, month, week, reports);
+    @PostMapping("/reports")
+    public void saveWeeklyReports(@RequestBody WeeklyReportSaveRequest request) {
+        weeklyReportService.saveWeeklyReports(
+            request.getYear(),
+            request.getMonth(),
+            request.getWeek(),
+            request.getReports()
+        );
     }
 }

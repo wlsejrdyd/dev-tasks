@@ -8,39 +8,59 @@ document.addEventListener("DOMContentLoaded", function () {
   const addRowBtn = document.getElementById("add-row-btn");
   const tableBody = document.getElementById("weekly-body");
 
+  let categoryList = [];
+
   function fillCategoryFilter() {
     fetch("/api/weekly/categories")
       .then(res => res.json())
       .then(data => {
+        categoryList = data;
         categoryFilter.innerHTML = `<option value="all">전체 카테고리</option>`;
         data.forEach(cat => {
           const opt = document.createElement("option");
-          opt.value = cat.name;
+          opt.value = cat.id;
           opt.textContent = cat.name;
           categoryFilter.appendChild(opt);
         });
       });
   }
 
+  function createCategorySelect(selectedId = null) {
+    const select = document.createElement("select");
+    select.className = "report-category";
+    categoryList.forEach(cat => {
+      const opt = document.createElement("option");
+      opt.value = cat.id;
+      opt.textContent = cat.name;
+      if (selectedId && Number(selectedId) === cat.id) {
+        opt.selected = true;
+      }
+      select.appendChild(opt);
+    });
+    return select;
+  }
+
   function loadReports() {
     const year = yearSelect.value;
     const month = monthSelect.value;
     const week = weekSelect.value;
-    const category = categoryFilter.value;
+    const categoryId = categoryFilter.value;
 
     fetch(`/api/weekly/reports?year=${year}&month=${month}&week=${week}`)
       .then(res => res.json())
       .then(data => {
         tableBody.innerHTML = "";
         data.forEach(row => {
-          if (category !== "all" && row.category !== category) return;
+          if (categoryId !== "all" && row.categoryId != categoryId) return;
           const tr = document.createElement("tr");
+          const categorySelect = createCategorySelect(row.categoryId);
           tr.innerHTML = `
             <td><input type="date" value="${row.date}" class="report-date"></td>
-            <td><input type="text" value="${row.category}" class="report-category"></td>
+            <td></td>
             <td><input type="text" value="${row.title}" class="report-title"></td>
             <td><input type="text" value="${row.content}" class="report-content" style="width: 100%"></td>
           `;
+          tr.children[1].appendChild(categorySelect);
           tableBody.appendChild(tr);
         });
       });
@@ -55,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const data = Array.from(rows).map(tr => {
       return {
         date: tr.querySelector(".report-date").value,
-        category: tr.querySelector(".report-category").value,
+        categoryId: Number(tr.querySelector(".report-category").value),
         title: tr.querySelector(".report-title").value,
         content: tr.querySelector(".report-content").value,
       };
@@ -101,16 +121,18 @@ document.addEventListener("DOMContentLoaded", function () {
   saveBtn.addEventListener("click", saveReports);
   addRowBtn.addEventListener("click", () => {
     const tr = document.createElement("tr");
+    const categorySelect = createCategorySelect();
     tr.innerHTML = `
       <td><input type="date" class="report-date"></td>
-      <td><input type="text" class="report-category"></td>
+      <td></td>
       <td><input type="text" class="report-title"></td>
       <td><input type="text" class="report-content" style="width: 100%"></td>
     `;
+    tr.children[1].appendChild(categorySelect);
     tableBody.appendChild(tr);
   });
 
   initSelects();
   fillCategoryFilter();
-  loadReports();
+  setTimeout(loadReports, 300); // 카테고리 로드 기다리기
 });

@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tasks.dto.WeeklyReportRequest;
 import tasks.dto.WeeklyReportResponse;
+import tasks.entity.WeeklyCategory;
 import tasks.entity.WeeklyReport;
+import tasks.repository.WeeklyCategoryRepository;
 import tasks.repository.WeeklyReportRepository;
 
 import java.time.LocalDate;
@@ -17,36 +19,42 @@ import java.util.stream.Collectors;
 public class WeeklyReportService {
 
     private final WeeklyReportRepository reportRepository;
+    private final WeeklyCategoryRepository categoryRepository;
 
     public List<WeeklyReportResponse> getWeeklyReports(int year, int month, int week) {
         return reportRepository.findByYearAndMonthAndWeek(year, month, week)
                 .stream()
-                .map(report -> WeeklyReportResponse.builder()
-                        .date(report.getDate() != null ? report.getDate().toString() : "")
-                        .category(report.getCategory())
-                        .title(report.getTitle())
-                        .content(report.getContent())
-                        .build())
+                .map(report -> {
+                    WeeklyCategory category = categoryRepository.findByName(report.getCategory()).orElse(null);
+                    return WeeklyReportResponse.builder()
+                            .date(report.getDate() != null ? report.getDate().toString() : "")
+                            .categoryId(category != null ? category.getId() : null)
+                            .categoryName(report.getCategory())
+                            .title(report.getTitle())
+                            .content(report.getContent())
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public void saveWeeklyReports(int year, int month, int week, List<WeeklyReportRequest> requests) {
-        // 기존 데이터 삭제
         List<WeeklyReport> existing = reportRepository.findByYearAndMonthAndWeek(year, month, week);
         reportRepository.deleteAll(existing);
 
-        // 새 데이터 저장
         List<WeeklyReport> newReports = requests.stream()
-                .map(req -> WeeklyReport.builder()
-                        .year(year)
-                        .month(month)
-                        .week(week)
-                        .date(req.getDate() != null && !req.getDate().isBlank() ? LocalDate.parse(req.getDate()) : null)
-                        .category(req.getCategory())
-                        .title(req.getTitle())
-                        .content(req.getContent())
-                        .build())
+                .map(req -> {
+                    WeeklyCategory cat = categoryRepository.findById(req.getCategoryId()).orElse(null);
+                    return WeeklyReport.builder()
+                            .year(year)
+                            .month(month)
+                            .week(week)
+                            .date(req.getDate() != null && !req.getDate().isBlank() ? LocalDate.parse(req.getDate()) : null)
+                            .category(cat != null ? cat.getName() : null)
+                            .title(req.getTitle())
+                            .content(req.getContent())
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         reportRepository.saveAll(newReports);

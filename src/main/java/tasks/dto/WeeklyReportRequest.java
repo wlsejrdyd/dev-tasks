@@ -8,7 +8,7 @@ public class WeeklyReportRequest {
     private int month;
     private int week;
     private String date;
-    private String category;
+    private Long categoryId;
     private String title;
     private String content;
 }
