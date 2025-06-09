@@ -11,7 +11,9 @@ import tasks.repository.WeeklyCategoryRepository;
 import tasks.repository.WeeklyReportRepository;
 
 import java.time.LocalDate;
+import java.time.temporal.WeekFields;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,17 +41,24 @@ public class WeeklyReportService {
 
     @Transactional
     public void saveWeeklyReports(int year, int month, int week, List<WeeklyReportRequest> requests) {
+        // 기존 데이터 삭제
         List<WeeklyReport> existing = reportRepository.findByYearAndMonthAndWeek(year, month, week);
         reportRepository.deleteAll(existing);
 
+        // 새 데이터 저장
         List<WeeklyReport> newReports = requests.stream()
                 .map(req -> {
+                    LocalDate date = LocalDate.parse(req.getDate());
+                    int y = date.getYear();
+                    int m = date.getMonthValue();
+                    int w = calculateWeekOfMonth(date);
+
                     WeeklyCategory cat = categoryRepository.findById(req.getCategoryId()).orElse(null);
                     return WeeklyReport.builder()
-                            .year(year)
-                            .month(month)
-                            .week(week)
-                            .date(req.getDate() != null && !req.getDate().isBlank() ? LocalDate.parse(req.getDate()) : null)
+                            .year(y)
+                            .month(m)
+                            .week(w)
+                            .date(date)
                             .category(cat != null ? cat.getName() : null)
                             .title(req.getTitle())
                             .content(req.getContent())
@@ -58,5 +67,10 @@ public class WeeklyReportService {
                 .collect(Collectors.toList());
 
         reportRepository.saveAll(newReports);
+    }
+
+    private int calculateWeekOfMonth(LocalDate date) {
+        WeekFields weekFields = WeekFields.of(Locale.KOREA);
+        return date.get(weekFields.weekOfMonth());
     }
 }
