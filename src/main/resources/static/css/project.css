@@ -1,0 +1,76 @@
+.project-files {
+  margin-top: 10px;
+  display: none;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ccc;
+}
+
+.project-files li {
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.project-files span {
+  flex-grow: 1;
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+.project-files .btn {
+  margin-left: 4px;
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
+.card-footer {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* 버튼 느낌 살리기 */
+.btn-upload {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-upload:hover {
+  background-color: #1976d2;
+}
+
+.btn-toggle-files {
+  border: 1px solid #2196f3;
+  color: #2196f3;
+  background-color: #fff;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-toggle-files:hover {
+  background-color: #e3f2fd;
+}
+
+.btn-xs {
+  font-size: 12px;
+  padding: 3px 6px;
+}
+
+.btn-danger {
+  background-color: #f44336;
+  color: white;
+  border: none;
+}
+.btn-danger:hover {
+  background-color: #d32f2f;
+}

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -30,18 +32,14 @@ public class Project {
     private LocalDate endDate;
 
     @Column(nullable = false)
-    private String status; // 진행중, 완료, 보류
+    private String status;
 
-    private String requestDept; // 요청부서
-
-    private String requester; // 요청자
+    private String requestDept;
+    private String requester;
 
     private boolean ipRequested;
-
     private boolean firewallRequested;
-
     private boolean vmRequested;
-
     private boolean serverSetupRequested;
 
     @CreationTimestamp
@@ -57,4 +55,8 @@ public class Project {
     @ManyToOne
     @JoinColumn(name = "updated_by", referencedColumnName = "id")
     private User updatedBy;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<ProjectFile> files = new ArrayList<>();
 }

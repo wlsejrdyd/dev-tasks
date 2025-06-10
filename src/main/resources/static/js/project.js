@@ -15,20 +15,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 등록용 모달 열기
   window.openModal = () => {
-    resetModalForm(); // 빈 폼
+    resetModalForm();
     document.getElementById("projectModal").style.display = "flex";
   };
 
-  // 수정용 프로젝트 불러오기
   window.loadProject = (id) => {
     fetch(`/projects/api/${id}`)
       .then(res => res.json())
       .then(data => {
         document.getElementById("projectModal").style.display = "flex";
-
-        // 필드 값 설정
         document.querySelector("#projectModal form").action = "/projects/update";
         document.querySelector("#projectModal input[name='id']").value = data.id;
         document.querySelector("#projectModal input[name='name']").value = data.name || '';
@@ -49,11 +45,30 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("projectModal").style.display = "none";
   };
 
-  // 폼 초기화
   function resetModalForm() {
     const form = document.querySelector("#projectModal form");
     form.reset();
     form.action = "/projects/save";
     form.querySelector("input[name='id']").value = '';
   }
+
+  window.deleteProjectFile = (el) => {
+    const fileId = el.getAttribute("data-id");
+    if (!fileId || !confirm("삭제할까요?")) return;
+
+    fetch(`/projects/file/delete/${fileId}`, {
+      method: "DELETE"
+    }).then(res => {
+      if (res.ok) location.reload();
+      else alert("삭제 실패");
+    });
+  };
+
+  window.toggleFileList = (btn) => {
+    const projectId = btn.getAttribute("data-id");
+    const fileList = document.querySelector(`.project-files[data-id='${projectId}']`);
+    if (fileList) {
+      fileList.style.display = (fileList.style.display === "none" || !fileList.style.display) ? "block" : "none";
+    }
+  };
 });

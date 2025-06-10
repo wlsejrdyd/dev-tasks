@@ -5,6 +5,11 @@ server:
       timeout: 10m
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+
   datasource:
     url: jdbc:mysql://localhost:9981/tasks
     username: task_admin
@@ -46,3 +51,7 @@ logging:
     org.hibernate.SQL: debug
     org.thymeleaf: trace
     org.springframework.boot.autoconfigure: error
+
+tasks:
+  upload:
+    project-path: /app/tasks/uploads/project

@@ -4,119 +4,129 @@
   <meta charset="UTF-8">
   <title>프로젝트 관리</title>
   <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/project.css">
   <script src="/js/project.js" defer></script>
   <script src="/js/logout-timer.js" defer></script>
   <script src="/js/calendar.js" defer></script>
 </head>
 <body>
-
 <div class="dashboard-wrapper">
-    	
-    <!-- 사이드바 -->
-    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <div th:replace="~{fragments/topbar :: topbar}"></div>
-    <div th:replace="~{fragments/calendar :: calendar}"></div>
-    
-    <!-- 본문 영역 -->
-    <div class="main-content">
-      <div class="dashboard-container">
-        <h1>📁 프로젝트 관리</h1>
-        <div class="section-actions">
-          <form th:action="@{/projects}" method="get" class="search-form">
-            <input type="text" name="keyword" placeholder="프로젝트명 검색" th:value="${keyword}">
-            <select name="status">
-              <option value="">전체 상태</option>
-              <option value="진행중" th:selected="${status == '진행중'}">진행중</option>
-              <option value="완료" th:selected="${status == '완료'}">완료</option>
-              <option value="보류" th:selected="${status == '보류'}">보류</option>
-            </select>
-            <button type="submit">검색</button>
-          </form>
-          <a href="#" class="btn btn-primary" onclick="openModal()">+ 새 프로젝트</a>
-        </div>
-    
-        <div class="card-grid">
-          <div class="card" th:each="project : ${projects}">
-            <div class="card-header">
-              <h3 th:text="${project.name}">프로젝트명</h3>
-              <span class="badge" th:text="${project.status}">진행중</span>
-            </div>
-            <div class="card-body">
-              <p><strong>요청부서:</strong> <span th:text="${project.requestDept}">요청부서</span></p>
-              <p><strong>요청자:</strong> <span th:text="${project.requester}">요청자</span></p>
-              <p><strong>기간:</strong> 📅 <span th:text="${project.startDate}">시작</span> ~ <span th:text="${project.endDate}">종료</span></p>
-              <p><strong>작성자:</strong> 👤 <span th:text="${project.createdBy?.name}">작성자</span></p>
-    
-              <ul style="margin-top: 10px; padding-left: 20px;">
-                <li th:if="${project.ipRequested}">✔️ IP 생성</li>
-                <li th:if="${project.firewallRequested}">✔️ 방화벽 등록</li>
-                <li th:if="${project.vmRequested}">✔️ VM 생성</li>
-                <li th:if="${project.serverSetupRequested}">✔️ 서버 세팅</li>
-              </ul>
-            </div>
-            <div class="card-footer">
-              <a href="#" class="btn" th:onclick="'loadProject(' + ${project.id} + ')'">수정</a>
-              <a th:href="@{'/projects/delete/' + ${project.id}}" class="btn btn-danger"
-                 onclick="return confirm('삭제할까요?')">삭제</a>
-            </div>
+  <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+  <div th:replace="~{fragments/topbar :: topbar}"></div>
+  <div th:replace="~{fragments/calendar :: calendar}"></div>
+
+  <div class="main-content">
+    <div class="dashboard-container">
+      <h1>📁 프로젝트 관리</h1>
+      <div class="section-actions">
+        <form th:action="@{/projects}" method="get" class="search-form">
+          <input type="text" name="keyword" placeholder="프로젝트명 검색" th:value="${keyword}">
+          <select name="status">
+            <option value="">전체 상태</option>
+            <option value="진행중" th:selected="${status == '진행중'}">진행중</option>
+            <option value="완료" th:selected="${status == '완료'}">완료</option>
+            <option value="보류" th:selected="${status == '보류'}">보류</option>
+          </select>
+          <button type="submit">검색</button>
+        </form>
+        <a href="#" class="btn btn-primary" onclick="openModal()">+ 새 프로젝트</a>
+      </div>
+
+      <div class="card-grid">
+        <div class="card" th:each="project : ${projects}">
+          <div class="card-header">
+            <h3 th:text="${project.name}">프로젝트명</h3>
+            <span class="badge" th:text="${project.status}">진행중</span>
+          </div>
+          <div class="card-body">
+            <p><strong>요청부서:</strong> <span th:text="${project.requestDept}">요청부서</span></p>
+            <p><strong>요청자:</strong> <span th:text="${project.requester}">요청자</span></p>
+            <p><strong>기간:</strong> 📅 <span th:text="${project.startDate}">시작</span> ~ <span th:text="${project.endDate}">종료</span></p>
+            <p><strong>작성자:</strong> 👤 <span th:text="${project.createdBy?.name}">작성자</span></p>
+
+            <ul style="margin-top: 10px; padding-left: 20px;">
+              <li th:if="${project.ipRequested}">✔️ IP 생성</li>
+              <li th:if="${project.firewallRequested}">✔️ 방화벽 등록</li>
+              <li th:if="${project.vmRequested}">✔️ VM 생성</li>
+              <li th:if="${project.serverSetupRequested}">✔️ 서버 세팅</li>
+            </ul>
+
+            <form th:action="@{'/projects/file/upload/' + ${project.id}}" method="post" enctype="multipart/form-data" style="margin-top:10px;">
+              <input type="file" name="file" required>
+              <button type="submit" class="btn btn-upload">📤</button>
+            </form>
+
+            <button type="button" class="btn btn-toggle-files" th:attr="data-id=${project.id}" onclick="toggleFileList(this)">📎 파일 목록 보기</button>
+
+            <ul th:if="${project.files != null}" class="project-files" th:attr="data-id=${project.id}">
+              <li th:each="file : ${project.files}">
+                <span th:text="${file.originalName}">파일명</span>
+                <a th:href="@{'/projects/file/download/' + ${file.id}}" class="btn-transparent btn-xs">⬇</a>
+                <a href="#" class="btn-transparent btn-xs" th:attr="data-id=${file.id}" onclick="deleteProjectFile(this)">🗑️</a>
+              </li>
+            </ul>
+          </div>
+          <div class="card-footer">
+            <a href="#" class="btn" th:onclick="'loadProject(' + ${project.id} + ')'">수정</a>
+            <a th:href="@{'/projects/delete/' + ${project.id}}" class="btn btn-danger" onclick="return confirm('삭제할까요?')">삭제</a>
           </div>
         </div>
       </div>
     </div>
-    
-    <!-- ✅ 모달은 body 바깥에 둬야 팝업처럼 보임 -->
-    <div id="projectModal" class="modal" style="display:none;">
-      <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <div id="modal-body">
-          <form th:action="@{/projects/save}" th:object="${newProject}" method="post" class="form-box">
-            <input type="hidden" name="id">
-            <label for="name">프로젝트명</label>
-            <input type="text" id="name" th:field="*{name}" placeholder="프로젝트 이름을 입력하세요" required>
-    
-            <label for="description">설명</label>
-            <textarea id="description" th:field="*{description}" placeholder="설명을 입력하세요" rows="3"></textarea>
-    
-            <div class="form-row">
-              <div>
-                <label for="startDate">시작일</label>
-                <input type="date" id="startDate" th:field="*{startDate}" required>
-              </div>
-              <div>
-                <label for="endDate">종료일</label>
-                <input type="date" id="endDate" th:field="*{endDate}" required>
-              </div>
+  </div>
+
+  <div id="projectModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <div id="modal-body">
+        <form th:action="@{/projects/save}" th:object="${newProject}" method="post" class="form-box">
+          <input type="hidden" name="id">
+          <label for="name">프로젝트명</label>
+          <input type="text" id="name" th:field="*{name}" placeholder="프로젝트 이름을 입력하세요" required>
+
+          <label for="description">설명</label>
+          <textarea id="description" th:field="*{description}" placeholder="설명을 입력하세요" rows="3"></textarea>
+
+          <div class="form-row">
+            <div>
+              <label for="startDate">시작일</label>
+              <input type="date" id="startDate" th:field="*{startDate}" required>
             </div>
-    
-            <label for="status">상태</label>
-            <select id="status" th:field="*{status}">
-              <option value="진행중">진행중</option>
-              <option value="완료">완료</option>
-              <option value="보류">보류</option>
-            </select>
-    
-            <label for="requestDept">요청부서</label>
-            <input type="text" id="requestDept" th:field="*{requestDept}" placeholder="요청부서를 입력하세요">
-    
-            <label for="requester">요청자</label>
-            <input type="text" id="requester" th:field="*{requester}" placeholder="요청자 이름을 입력하세요">
-    
-            <fieldset>
-              <legend>완료 된 작업 체크</legend>
-              <label><input type="checkbox" th:field="*{ipRequested}"> IP 생성</label><br>
-              <label><input type="checkbox" th:field="*{firewallRequested}"> 방화벽 등록</label><br>
-              <label><input type="checkbox" th:field="*{vmRequested}"> VM 생성</label><br>
-              <label><input type="checkbox" th:field="*{serverSetupRequested}"> 서버 세팅</label>
-            </fieldset>
-    
-            <div class="form-actions">
-              <button type="submit" class="btn btn-primary">저장</button>
-              <button type="button" class="btn" onclick="closeModal()">취소</button>
+            <div>
+              <label for="endDate">종료일</label>
+              <input type="date" id="endDate" th:field="*{endDate}" required>
             </div>
-          </form>
-        </div>
+          </div>
+
+          <label for="status">상태</label>
+          <select id="status" th:field="*{status}">
+            <option value="진행중">진행중</option>
+            <option value="완료">완료</option>
+            <option value="보류">보류</option>
+          </select>
+
+          <label for="requestDept">요청부서</label>
+          <input type="text" id="requestDept" th:field="*{requestDept}" placeholder="요청부서를 입력하세요">
+
+          <label for="requester">요청자</label>
+          <input type="text" id="requester" th:field="*{requester}" placeholder="요청자 이름을 입력하세요">
+
+          <fieldset>
+            <legend>완료 된 작업 체크</legend>
+            <label><input type="checkbox" th:field="*{ipRequested}"> IP 생성</label><br>
+            <label><input type="checkbox" th:field="*{firewallRequested}"> 방화벽 등록</label><br>
+            <label><input type="checkbox" th:field="*{vmRequested}"> VM 생성</label><br>
+            <label><input type="checkbox" th:field="*{serverSetupRequested}"> 서버 세팅</label>
+          </fieldset>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">저장</button>
+            <button type="button" class="btn" onclick="closeModal()">취소</button>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
 </div>
 </body>
 </html>
