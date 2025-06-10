@@ -64,7 +64,6 @@ button:hover {
   background-color: #f0f8ff;
 }
 
-/* 요일 색상 강조 */
 .sunday {
   color: red;
   font-weight: bold;
@@ -82,7 +81,6 @@ button:hover {
   background-color: #fff0f0;
 }
 
-/* 📊 통계 테이블 스타일 향상 */
 #stat-table {
   background: #f9fbff;
   border-radius: 8px;
@@ -119,4 +117,26 @@ button:hover {
 #stat-table td:last-child {
   font-weight: bold;
   color: #0a58ca;
+}
+
+/* ✅ 오늘 날짜 하이라이트 */
+.today-highlight {
+  background-color: #fff8d5 !important;
+  border: 2px solid #ffbb00 !important;
+}
+
+/* ✅ 전/전전/오늘 야간 박스 */
+#night-summary-box {
+  margin: 10px 0 20px;
+  padding: 12px 18px;
+  background: #f7f9fc;
+  border: 1px solid #d9e2ef;
+  border-radius: 8px;
+  font-size: 14px;
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+}
+#night-summary-box span {
+  font-weight: bold;
 }
