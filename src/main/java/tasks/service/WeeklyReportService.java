@@ -5,11 +5,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tasks.dto.WeeklyReportRequest;
 import tasks.dto.WeeklyReportResponse;
+import tasks.entity.WeeklyCategory;
 import tasks.entity.WeeklyReport;
+import tasks.repository.WeeklyCategoryRepository;
 import tasks.repository.WeeklyReportRepository;
 
 import java.time.LocalDate;
+import java.time.temporal.WeekFields;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,16 +21,21 @@ import java.util.stream.Collectors;
 public class WeeklyReportService {
 
     private final WeeklyReportRepository reportRepository;
+    private final WeeklyCategoryRepository categoryRepository;
 
     public List<WeeklyReportResponse> getWeeklyReports(int year, int month, int week) {
         return reportRepository.findByYearAndMonthAndWeek(year, month, week)
                 .stream()
-                .map(report -> WeeklyReportResponse.builder()
-                        .date(report.getDate() != null ? report.getDate().toString() : "")
-                        .category(report.getCategory())
-                        .title(report.getTitle())
-                        .content(report.getContent())
-                        .build())
+                .map(report -> {
+                    WeeklyCategory category = categoryRepository.findByName(report.getCategory()).orElse(null);
+                    return WeeklyReportResponse.builder()
+                            .date(report.getDate() != null ? report.getDate().toString() : "")
+                            .categoryId(category != null ? category.getId() : null)
+                            .categoryName(report.getCategory())
+                            .title(report.getTitle())
+                            .content(report.getContent())
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
@@ -38,17 +47,30 @@ public class WeeklyReportService {
 
         // 새 데이터 저장
         List<WeeklyReport> newReports = requests.stream()
-                .map(req -> WeeklyReport.builder()
-                        .year(year)
-                        .month(month)
-                        .week(week)
-                        .date(req.getDate() != null && !req.getDate().isBlank() ? LocalDate.parse(req.getDate()) : null)
-                        .category(req.getCategory())
-                        .title(req.getTitle())
-                        .content(req.getContent())
-                        .build())
+                .map(req -> {
+                    LocalDate date = LocalDate.parse(req.getDate());
+                    int y = date.getYear();
+                    int m = date.getMonthValue();
+                    int w = calculateWeekOfMonth(date);
+
+                    WeeklyCategory cat = categoryRepository.findById(req.getCategoryId()).orElse(null);
+                    return WeeklyReport.builder()
+                            .year(y)
+                            .month(m)
+                            .week(w)
+                            .date(date)
+                            .category(cat != null ? cat.getName() : null)
+                            .title(req.getTitle())
+                            .content(req.getContent())
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         reportRepository.saveAll(newReports);
+    }
+
+    private int calculateWeekOfMonth(LocalDate date) {
+        WeekFields weekFields = WeekFields.of(Locale.KOREA);
+        return date.get(weekFields.weekOfMonth());
     }
 }
