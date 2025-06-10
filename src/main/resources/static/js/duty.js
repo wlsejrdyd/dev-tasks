@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const yesterdayNight = getNightNamesByDate(yesterStr);
         const beforeNight = getNightNamesByDate(beforeStr);
 
-        nightSummaryBox.innerHTML = `오늘 ${today.getMonth() + 1}월 ${today.getDate()}일 | 전전 야간: ${beforeNight} | 전 야간: ${yesterdayNight} | 오늘 야간: ${todayNight}`;
+        nightSummaryBox.innerHTML = `| 전전 야간: ${beforeNight} || 전 야간: ${yesterdayNight} || 오늘 야간: ${todayNight} |`;
 
         const todayCol = dateMap[todayStr]?.col;
         const todayWeek = dateMap[todayStr]?.week;
