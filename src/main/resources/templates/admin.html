@@ -5,6 +5,7 @@
   <title>관리자 페이지 | TASKS</title>
   <link rel="stylesheet" href="/css/common.css">
   <link rel="stylesheet" href="/css/attendance.css">
+  <link rel="stylesheet" href="/css/admin.css">
   <script src="/js/admin.js" defer></script>
   <script src="/js/logout-timer.js" defer></script>
   <script src="/js/calendar.js" defer></script>
@@ -16,50 +17,55 @@
     <div th:replace="~{fragments/calendar :: calendar}"></div>
 
     <div class="main-content">
-      <h1>👥 사용자 목록</h1>
-      <table class="attendance-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>이름</th>
-            <th>이메일</th>
-            <th>권한</th>
-            <th>투입일</th>
-            <th>해지일</th>
-            <th>연차(부여)</th>
-            <th>관리</th>
-          </tr>
-        </thead>
-        <tbody id="adminUserTableBody">
-          <!-- JS에서 비동기 로딩 -->
-        </tbody>
-      </table>
+      <!-- 📌 탭 버튼 -->
+      <div class="admin-tabs">
+        <button class="tab-button active" data-tab="user-tab">사용자 목록</button>
+        <button class="tab-button" data-tab="category-tab">주간보고 카테고리</button>
+        <button class="tab-button" data-tab="notice-tab">공지사항 작성</button>
+        <button class="tab-button" data-tab="poll-tab">투표 만들기</button>
+      </div>
 
-      <hr><br>
+      <!-- 👥 사용자 목록 -->
+      <div id="user-tab" class="tab-content active">
+        <h1>👥 사용자 목록</h1>
+        <table class="attendance-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>이름</th>
+              <th>이메일</th>
+              <th>권한</th>
+              <th>투입일</th>
+              <th>해지일</th>
+              <th>연차(부여)</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody id="adminUserTableBody">
+            <!-- JS에서 비동기 로딩 -->
+          </tbody>
+        </table>
+      </div>
 
       <!-- 📁 카테고리 관리 -->
-      <section>
+      <div id="category-tab" class="tab-content">
         <h2>📁 주간보고 카테고리 관리</h2>
         <ul id="category-list"></ul>
         <input type="text" id="new-category" placeholder="새 카테고리">
         <button id="add-category-btn">추가</button>
-      </section>
-
-      <br><hr><br>
+      </div>
 
       <!-- 📢 공지사항 작성 -->
-      <section>
+      <div id="notice-tab" class="tab-content">
         <h2>📢 공지사항 작성</h2>
         <input type="text" id="notice-title" placeholder="제목" style="width: 400px;"><br><br>
         <textarea id="notice-content" rows="5" cols="80" placeholder="내용 입력"></textarea><br>
         <label><input type="checkbox" id="notice-pinned"> 상단 고정</label><br>
         <button id="notice-submit-btn">공지 등록</button>
-      </section>
-
-      <br><hr><br>
+      </div>
 
       <!-- 🗳 투표 만들기 -->
-      <section>
+      <div id="poll-tab" class="tab-content">
         <h2>🗳 투표 만들기</h2>
         <input type="text" id="poll-question" placeholder="질문" style="width: 400px;"><br><br>
         <div id="poll-options">
@@ -68,7 +74,7 @@
         </div>
         <button id="add-poll-option-btn">선택지 추가</button>
         <button id="poll-submit-btn">투표 등록</button>
-      </section>
+      </div>
     </div>
   </div>
 </body>

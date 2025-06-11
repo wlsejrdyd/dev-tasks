@@ -33,9 +33,10 @@ public class ProjectController {
     @GetMapping
     public String listProjects(@RequestParam(required = false) String keyword,
                                @RequestParam(required = false) String status,
-                               Model model) {
+                               Model model,
+                               Principal principal) {
         List<Project> projects;
-
+    
         if ((keyword != null && !keyword.isEmpty()) && (status != null && !status.isEmpty())) {
             projects = projectRepository.findByNameContainingIgnoreCaseAndStatus(keyword, status);
         } else if (keyword != null && !keyword.isEmpty()) {
@@ -45,11 +46,17 @@ public class ProjectController {
         } else {
             projects = projectRepository.findAll();
         }
-
+    
         model.addAttribute("projects", projects);
         model.addAttribute("keyword", keyword);
         model.addAttribute("status", status);
         model.addAttribute("newProject", new Project());
+    
+        if (principal != null) {
+            userRepository.findByUsername(principal.getName())
+                    .ifPresent(user -> model.addAttribute("userRole", user.getRole().name()));
+        }
+    
         return "project";
     }
 

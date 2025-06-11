@@ -68,7 +68,9 @@
           </div>
           <div class="card-footer">
             <a href="#" class="btn" th:onclick="'loadProject(' + ${project.id} + ')'">수정</a>
-            <a th:href="@{'/projects/delete/' + ${project.id}}" class="btn btn-danger" onclick="return confirm('삭제할까요?')">삭제</a>
+	    <span th:if="${userRole == 'ADMIN'}">
+	      <a th:href="@{'/projects/delete/' + ${project.id}}" class="btn btn-danger" onclick="return confirm('삭제할까요?')">삭제</a>
+	    </span>
           </div>
         </div>
       </div>

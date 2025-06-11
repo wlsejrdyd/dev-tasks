@@ -4,6 +4,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const pollForm = document.getElementById("poll-form");
   const pollQuestion = document.getElementById("poll-question");
 
+  let noticePage = 0;
+  let loadingNotices = false;
+  let moreNoticesAvailable = true;
+
   function formatDateTime(dtStr) {
     if (!dtStr) return "-";
     const dt = new Date(dtStr);
@@ -41,11 +45,23 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  function renderNotices() {
-    fetch("/api/notices")
+  const sentinel = document.createElement("div");
+  sentinel.id = "notice-sentinel";
+  noticeList.appendChild(sentinel);
+
+  function loadNotices() {
+    if (loadingNotices || !moreNoticesAvailable) return;
+    loadingNotices = true;
+
+    fetch(`/api/notices?page=${noticePage}`)
       .then(res => res.json())
       .then(data => {
-        noticeList.innerHTML = "";
+        if (!Array.isArray(data) || data.length === 0) {
+          moreNoticesAvailable = false;
+          observer.disconnect();
+          return;
+        }
+
         data.forEach(notice => {
           const li = document.createElement("li");
           const title = document.createElement("div");
@@ -66,13 +82,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
           li.appendChild(title);
           li.appendChild(content);
-          noticeList.appendChild(li);
+          noticeList.insertBefore(li, sentinel); // sentinel 위에 붙이기
         });
+
+        noticePage++;
+        loadingNotices = false;
+
+        // sentinel 항상 맨 아래 유지
+        noticeList.appendChild(sentinel);
       })
       .catch(() => {
-        noticeList.innerHTML = "<li>공지사항을 불러올 수 없습니다.</li>";
+        loadingNotices = false;
+        noticeList.innerHTML += "<li>공지사항을 불러올 수 없습니다.</li>";
       });
   }
+
+  const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      loadNotices();
+    }
+  }, { threshold: 1.0 });
+
+  observer.observe(sentinel);
 
   function renderPoll() {
     fetch("/api/poll")
@@ -132,6 +163,5 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   renderUpcomingSchedules();
-  renderNotices();
   renderPoll();
 });

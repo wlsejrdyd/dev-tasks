@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import tasks.entity.User;
 import tasks.repository.UserRepository;
 import tasks.service.UserService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.Optional;  // Optional<User>용
+import org.springframework.dao.DataIntegrityViolationException;  // 예외 처리용
+import org.springframework.security.core.context.SecurityContextHolder;  // 로그아웃 처리용
 
 import java.security.Principal;
 
@@ -77,10 +81,26 @@ public class UserController {
     }
 
     @PostMapping("/mypage/delete")
-    public String deleteAccount(HttpSession session, Principal principal) {
-        String username = principal.getName();
-        userRepository.findByUsername(username).ifPresent(userRepository::delete);
-        session.invalidate();
-        return "redirect:/auth/login";
+    public String deleteAccount(Principal principal, RedirectAttributes redirectAttributes) {
+        if (principal != null) {
+            String username = principal.getName();
+            Optional<User> optionalUser = userRepository.findByUsername(username);
+    
+            if (optionalUser.isPresent()) {
+                try {
+                    User user = optionalUser.get();
+                    userRepository.delete(user);
+                    SecurityContextHolder.clearContext(); // 로그아웃 처리
+                    return "redirect:/login?logout";
+                } catch (DataIntegrityViolationException e) {
+                    // 근태 관리에 등록된 경우 FK 제약으로 삭제 실패
+                    redirectAttributes.addFlashAttribute("error", "근태 관리에 등록된 계정입니다. 삭제가 불가하오니 관리자에게 문의하십시오.");
+                    return "redirect:/mypage";
+                }
+            }
+        }
+    
+        redirectAttributes.addFlashAttribute("error", "사용자를 찾을 수 없습니다.");
+        return "redirect:/mypage";
     }
 }
