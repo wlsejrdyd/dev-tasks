@@ -66,11 +66,23 @@ public class ProjectController {
 
     @PostMapping("/update")
     public String updateProject(@ModelAttribute Project project, Principal principal) {
-        if (principal != null) {
-            User user = userRepository.findByUsername(principal.getName()).orElse(null);
-            project.setUpdatedBy(user);
+        Optional<Project> optional = projectRepository.findById(project.getId());
+        if (optional.isPresent()) {
+            Project existing = optional.get();
+    
+            // 기존 파일 리스트 유지
+            project.setFiles(existing.getFiles());
+    
+            // createdBy는 수정되면 안 되므로 유지
+            project.setCreatedBy(existing.getCreatedBy());
+    
+            if (principal != null) {
+                User user = userRepository.findByUsername(principal.getName()).orElse(null);
+                project.setUpdatedBy(user);
+            }
+    
+            projectRepository.save(project);
         }
-        projectRepository.save(project);
         return "redirect:/projects";
     }
 
